@@ -1,9 +1,13 @@
 import * as cdk from "aws-cdk-lib";
-import { Construct } from "constructs";
-// import * as sqs from 'aws-cdk-lib/aws-sqs';
+import { createLambdas } from "../infra/createLambdas";
+import { configureApiGateway } from "../infra/configureApiGateway";
 
-export class DataguardStack extends cdk.Stack {
-  constructor(scope: Construct, id: string, props?: cdk.StackProps) {
+export class DataGuardStack extends cdk.Stack {
+  constructor(scope: cdk.App, id: string, props?: cdk.StackProps) {
     super(scope, id, props);
+
+    const lambdas = createLambdas(this);
+
+    configureApiGateway(this, lambdas);
   }
 }
