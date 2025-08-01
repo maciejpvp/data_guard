@@ -4,14 +4,14 @@ import * as secretsmanager from "aws-cdk-lib/aws-secretsmanager";
 import { GOOGLE_CLIENT_ID } from "../env";
 
 export const configureCognito = (stack: Stack) => {
-  const userPool = new cognito.UserPool(stack, "MyUserPool2", {
+  const userPool = new cognito.UserPool(stack, "DataGuardUserPool", {
     selfSignUpEnabled: true,
     signInAliases: { email: true },
   });
 
   userPool.addDomain("UserPoolDomain", {
     cognitoDomain: {
-      domainPrefix: "file-system-maciejpvp-nyasdads7-new",
+      domainPrefix: "data-guard-maciejpvp",
     },
   });
 
