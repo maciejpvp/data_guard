@@ -20,7 +20,13 @@ export class DataGuardPipeline extends Stack {
         input: CodePipelineSource.gitHub("maciejpvp/data_guard", "main", {
           authentication: SecretValue.secretsManager("github-token"),
         }),
-        commands: ["npm ci", "npm run build", "npx cdk synth"],
+        commands: [
+          "ls",
+          "cd backend",
+          "npm ci",
+          "npm run build",
+          "npx cdk synth",
+        ],
       }),
     });
 
