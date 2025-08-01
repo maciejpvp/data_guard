@@ -23,7 +23,7 @@ export class DataGuardPipeline extends Stack {
         commands: [
           "ls",
           "cd backend",
-          "npm ci",
+          "npm install",
           "npm run build",
           "npx cdk synth",
         ],
