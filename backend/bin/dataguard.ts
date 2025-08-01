@@ -1,8 +1,11 @@
 import * as cdk from "aws-cdk-lib";
-import { DataGuardStack } from "../lib/dataguard-stack";
+import { DataGuardPipeline } from "../lib/dataguard-pipeline";
 
 const app = new cdk.App();
 
-new DataGuardStack(app, "dataguard-stack");
+const env = {
+  account: "445567075183",
+  region: "eu-central-1",
+};
 
-app.synth();
+new DataGuardPipeline(app, "DataGuardPipelineStack", { env });
