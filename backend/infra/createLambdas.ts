@@ -5,16 +5,17 @@ import * as path from "path";
 
 type Props = {
   valutDB: aws_dynamodb.Table;
+  stage: string;
 };
 
 export const createLambdas = (stack: Stack, props: Props) => {
-  const { valutDB } = props;
+  const { valutDB, stage } = props;
 
   const lambdaConfig = {
     runtime: lambda.Runtime.NODEJS_20_X,
   };
 
-  const getList = new NodejsFunction(stack, "getList", {
+  const getList = new NodejsFunction(stack, `getList-${stage}`, {
     ...lambdaConfig,
     entry: path.join(__dirname, "../src/handlers/getList.ts"),
     handler: "handler",
