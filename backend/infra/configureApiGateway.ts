@@ -9,9 +9,10 @@ export const configureApiGateway = (
   stack: Stack,
   lambdas: ReturnType<typeof createLambdas>,
   userPool: UserPool,
+  stage: string,
 ) => {
-  const api = new apigateway.RestApi(stack, "Api", {
-    restApiName: `DataGuardAPI`,
+  const api = new apigateway.RestApi(stack, `Api-${stage}`, {
+    restApiName: `DataGuardAPI-${stage}`,
     defaultCorsPreflightOptions: {
       allowOrigins: apigateway.Cors.ALL_ORIGINS,
       allowMethods: apigateway.Cors.ALL_METHODS,
@@ -27,12 +28,12 @@ export const configureApiGateway = (
     },
   );
 
-  new ApiRoute(stack, "GetListRoute", {
+  new ApiRoute(stack, `GetListRoute-${stage}`, {
     api,
     type: "GET",
     route: "get",
     lambda: lambdas.getList,
-    name: "GetList",
+    name: `GetList-${stage}`,
     secured: true,
     authorizer,
   });
