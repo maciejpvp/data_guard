@@ -9,7 +9,6 @@ import { DynamoDBDocumentClient } from "@aws-sdk/lib-dynamodb";
 import { parseBody } from "@/utils/parseBody";
 import Joi from "joi";
 import { BodyType } from "@/../shared/types";
-import "joi-extract-type";
 
 const dynamo = new DynamoDBClient();
 const docClient = DynamoDBDocumentClient.from(dynamo);

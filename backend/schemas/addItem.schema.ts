@@ -9,9 +9,19 @@ const schema: apigateway.JsonSchema = {
       minLength: 1,
       maxLength: 50,
     },
+    url: {
+      type: apigateway.JsonSchemaType.STRING,
+      format: "uri",
+      pattern: "^(https?:\\/\\/)",
+    },
     type: {
       type: apigateway.JsonSchemaType.STRING,
       enum: ["password", "creditcard", "token", "note"],
+    },
+    password: {
+      type: apigateway.JsonSchemaType.STRING,
+      minLength: 1,
+      maxLength: 1000,
     },
   },
   additionalProperties: false,
