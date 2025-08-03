@@ -14,9 +14,9 @@ export class DataGuardStack extends cdk.Stack {
 
     const { userPool } = configureCognito(this, props.stage);
 
-    const valutDB = createVaultDB(this, { stage: props.stage });
+    const vaultDB = createVaultDB(this, { stage: props.stage });
 
-    const lambdas = createLambdas(this, { valutDB, stage: props.stage });
+    const lambdas = createLambdas(this, { vaultDB, stage: props.stage });
 
     configureApiGateway(this, lambdas, userPool, props.stage);
   }

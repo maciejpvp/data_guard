@@ -4,6 +4,7 @@ import * as apigateway from "aws-cdk-lib/aws-apigateway";
 import { createLambdas } from "./createLambdas";
 import { UserPool } from "aws-cdk-lib/aws-cognito";
 import { ApiRoute } from "../constructs/ApiRoute";
+import { addItemSchema } from "../schemas/addItem.schema";
 
 export const configureApiGateway = (
   stack: Stack,
@@ -32,10 +33,19 @@ export const configureApiGateway = (
     api,
     type: "GET",
     route: "get",
-    lambda: lambdas.getList,
+    lambda: lambdas.getList.lambdaFunction,
     name: `GetList-${stage}`,
     secured: true,
     authorizer,
+  });
+
+  new ApiRoute(stack, `AddItemRoute-${stage}`, {
+    api,
+    type: "POST",
+    route: "vault/addItem",
+    lambda: lambdas.addItem.lambdaFunction,
+    name: `AddItem-${stage}`,
+    requestSchema: addItemSchema,
   });
 
   new cdk.CfnOutput(stack, "ApiUrl", {

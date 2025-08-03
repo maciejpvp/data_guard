@@ -8,6 +8,12 @@ type CommonProps = {
   route: string | string[];
   lambda: lambda.IFunction;
   name?: string;
+  requestSchema?: {
+    modelName: string;
+    schema: apigateway.JsonSchema;
+    validateRequestBody?: boolean;
+    validateRequestParameters?: boolean;
+  };
 };
 
 export type ApiRouteProps =
@@ -32,6 +38,7 @@ export class ApiRoute extends Construct {
       lambda,
       secured = false,
       name,
+      requestSchema,
     } = props;
 
     const parts = Array.isArray(route)
@@ -45,7 +52,35 @@ export class ApiRoute extends Construct {
     let resource = api.root;
     for (const part of parts) {
       resource = resource.addResource(part);
-      // addCorsMock(resource);
+    }
+
+    // Create model and request validator if schema provided
+    let requestModel: apigateway.Model | undefined;
+    let validator: apigateway.RequestValidator | undefined;
+
+    if (requestSchema) {
+      requestModel = new apigateway.Model(
+        this,
+        `${requestSchema.modelName}Model`,
+        {
+          restApi: api,
+          contentType: "application/json",
+          modelName: requestSchema.modelName,
+          schema: requestSchema.schema,
+        },
+      );
+
+      validator = new apigateway.RequestValidator(
+        this,
+        `${requestSchema.modelName}Validator`,
+        {
+          restApi: api,
+          requestValidatorName: `${requestSchema.modelName}-validator`,
+          validateRequestBody: requestSchema.validateRequestBody ?? true,
+          validateRequestParameters:
+            requestSchema.validateRequestParameters ?? false,
+        },
+      );
     }
 
     resource.addMethod(type, new apigateway.LambdaIntegration(lambda), {
@@ -54,6 +89,10 @@ export class ApiRoute extends Construct {
         authorizationType: apigateway.AuthorizationType.COGNITO,
       }),
       operationName: name ?? `${type} ${parts.join("/")}`,
+      requestModels: requestModel
+        ? { "application/json": requestModel }
+        : undefined,
+      requestValidator: validator,
     });
   }
 }

@@ -1,29 +1,33 @@
 import { aws_dynamodb, Stack } from "aws-cdk-lib";
-import * as lambda from "aws-cdk-lib/aws-lambda";
-import { NodejsFunction } from "aws-cdk-lib/aws-lambda-nodejs";
-import * as path from "path";
+import { CreateLambda } from "../constructs/CreateLambda";
 
 type Props = {
-  valutDB: aws_dynamodb.Table;
+  vaultDB: aws_dynamodb.Table;
   stage: string;
 };
 
 export const createLambdas = (stack: Stack, props: Props) => {
-  const { valutDB, stage } = props;
+  const { vaultDB, stage } = props;
 
-  const lambdaConfig = {
-    runtime: lambda.Runtime.NODEJS_20_X,
-  };
-
-  const getList = new NodejsFunction(stack, `getList-${stage}`, {
-    ...lambdaConfig,
-    entry: path.join(__dirname, "../src/handlers/getList.ts"),
-    handler: "handler",
+  const getList = new CreateLambda(stack, `GetListLambda-${stage}`, {
+    name: "getList",
+    stage,
+    resources: [
+      {
+        grant: (fn) => vaultDB.grantReadData(fn),
+        envName: "vaultDB",
+        envValue: vaultDB.tableName,
+      },
+    ],
   });
 
-  valutDB.grantReadData(getList);
+  const addItem = new CreateLambda(stack, `AddItemLambda-${stage}`, {
+    name: "addItem",
+    stage,
+  });
 
   return {
     getList,
+    addItem,
   };
 };
