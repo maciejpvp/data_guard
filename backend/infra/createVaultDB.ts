@@ -9,9 +9,9 @@ export const createVaultDB = (stack: Stack, props: Props) => {
   const { stage } = props;
 
   const table = new dynamodb.Table(stack, `ValutDB-${stage}`, {
-    tableName: `ValutDB-${stage}`,
+    tableName: `ValutDB-${stage}-2`,
     partitionKey: { name: "userId", type: dynamodb.AttributeType.STRING },
-    sortKey: { name: "uuid", type: dynamodb.AttributeType.STRING },
+    sortKey: { name: "id", type: dynamodb.AttributeType.STRING },
     billingMode: dynamodb.BillingMode.PAY_PER_REQUEST,
     removalPolicy: RemovalPolicy.DESTROY,
   });

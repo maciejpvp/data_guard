@@ -5,10 +5,12 @@ import {
 } from "aws-lambda";
 import { sendResponse } from "@/utils/sendResponse";
 import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
-import { DynamoDBDocumentClient } from "@aws-sdk/lib-dynamodb";
+import { DynamoDBDocumentClient, PutCommand } from "@aws-sdk/lib-dynamodb";
 import { parseBody } from "@/utils/parseBody";
 import Joi from "joi";
 import { BodyType } from "@/../shared/types";
+
+const vaultDB = process.env.vaultDB;
 
 const dynamo = new DynamoDBClient();
 const docClient = DynamoDBDocumentClient.from(dynamo);
@@ -32,6 +34,20 @@ export const handler: Handler = async (
     return sendResponse(400, {
       message: error,
     });
+  }
+
+  try {
+    await docClient.send(
+      new PutCommand({
+        TableName: vaultDB,
+        Item: {
+          userId: "123",
+          id: "1",
+        },
+      }),
+    );
+  } catch (err) {
+    return sendResponse(500, err);
   }
 
   return sendResponse(200, { body });
