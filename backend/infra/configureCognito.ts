@@ -53,11 +53,11 @@ export const configureCognito = (stack: Stack, stage: string) => {
         ],
         callbackUrls: [
           `https://d1p6jpp4gceiew.cloudfront.net/callback`,
-          "http://localhost:3000/callback",
+          "http://localhost:5173/callback",
         ],
         logoutUrls: [
           `https://d1p6jpp4gceiew.cloudfront.net/logout`,
-          "http://localhost:3000/logout",
+          "http://localhost:5173/logout",
         ],
       },
       supportedIdentityProviders: [
