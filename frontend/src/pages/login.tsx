@@ -1,23 +1,8 @@
-// import { GoogleLogoIcon } from "@/components/icons";
 import { GoogleLogoIcon } from "@/components/icons";
 import AuthLayout from "@/layouts/auth";
+import { redirectToGoogleLogin } from "@/utils/auth";
 
 export const LoginPage = () => {
-  const redirectUrl = "http://localhost:5173/callback";
-  const clientId = "7rna45aoila8e165sl7jbgk8pu";
-  const cognitoURL =
-    "https://data-guard-maciejpvp-test.auth.eu-central-1.amazoncognito.com/oauth2/authorize";
-
-  const handleGoogleLogin = () => {
-    window.location.href =
-      `${cognitoURL}` +
-      "?identity_provider=Google" +
-      `&redirect_uri=${redirectUrl}` +
-      "&response_type=CODE" +
-      `&client_id=${clientId}` +
-      "&scope=openid+profile+email";
-  };
-
   return (
     <AuthLayout>
       <div className="flex flex-col items-center justify-center min-h-[40vh] px-4">
@@ -26,7 +11,7 @@ export const LoginPage = () => {
 
         <button
           className="flex items-center gap-3 px-6 py-3 rounded-xl bg-white/10 hover:bg-white/20 transition-all duration-200 ease-in-out border border-white/10 backdrop-blur-md shadow-lg hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-white"
-          onClick={handleGoogleLogin}
+          onClick={redirectToGoogleLogin}
         >
           <GoogleLogoIcon className="w-6 h-6" />
           <span className="text-base font-medium text-default-900 tracking-wide">
