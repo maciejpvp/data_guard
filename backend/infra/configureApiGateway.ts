@@ -14,6 +14,7 @@ export const configureApiGateway = (
 ) => {
   const api = new apigateway.RestApi(stack, `Api-${stage}`, {
     restApiName: `DataGuardAPI-${stage}`,
+
     defaultCorsPreflightOptions: {
       allowOrigins: apigateway.Cors.ALL_ORIGINS,
       allowMethods: apigateway.Cors.ALL_METHODS,
@@ -32,7 +33,7 @@ export const configureApiGateway = (
   new ApiRoute(stack, `GetListRoute-${stage}`, {
     api,
     type: "GET",
-    route: "get",
+    route: "vault/getList",
     lambda: lambdas.getList.lambdaFunction,
     name: `GetList-${stage}`,
     secured: true,
