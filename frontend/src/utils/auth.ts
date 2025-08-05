@@ -44,10 +44,35 @@ export const exchangeCodeForToken = async (code: string): Promise<void> => {
     localStorage.setItem("refreshToken", data.refresh_token);
   }
 
-  // If you also want ID token
-  // if (data.id_token) {
-  //   localStorage.setItem("idToken", data.id_token);
-  // }
-
   window.location.href = "/drive";
+};
+
+export const refreshSession = async (
+  refreshToken: string,
+): Promise<string | null> => {
+  const tokenUrl = `${COGNITO_DOMAIN}/oauth2/token`;
+
+  const response = await fetch(tokenUrl, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/x-www-form-urlencoded",
+    },
+    body: new URLSearchParams({
+      grant_type: "refresh_token",
+      client_id: CLIENT_ID,
+      refresh_token: refreshToken,
+    }),
+  });
+
+  if (!response.ok) {
+    return null;
+  }
+
+  const data = await response.json();
+
+  if (data.id_token) {
+    return data.id_token;
+  }
+
+  return null;
 };
