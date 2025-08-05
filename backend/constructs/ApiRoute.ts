@@ -2,18 +2,20 @@ import { Construct } from "constructs";
 import * as apigateway from "aws-cdk-lib/aws-apigateway";
 import * as lambda from "aws-cdk-lib/aws-lambda";
 
+type RequestSchema = {
+  modelName: string;
+  schema: apigateway.JsonSchema;
+  validateRequestBody?: boolean;
+  validateRequestParameters?: boolean;
+};
+
 type CommonProps = {
   api: apigateway.RestApi;
   type: "GET" | "POST" | "DELETE" | "PUT" | "PATCH";
   route: string | string[];
   lambda: lambda.IFunction;
   name?: string;
-  requestSchema?: {
-    modelName: string;
-    schema: apigateway.JsonSchema;
-    validateRequestBody?: boolean;
-    validateRequestParameters?: boolean;
-  };
+  requestSchema?: RequestSchema;
 };
 
 export type ApiRouteProps =
@@ -50,11 +52,11 @@ export class ApiRoute extends Construct {
     }
 
     let resource = api.root;
+
     for (const part of parts) {
-      resource = resource.addResource(part);
+      resource = this.getOrCreateResource(resource, part);
     }
 
-    // Create model and request validator if schema provided
     let requestModel: apigateway.Model | undefined;
     let validator: apigateway.RequestValidator | undefined;
 
@@ -94,5 +96,17 @@ export class ApiRoute extends Construct {
         : undefined,
       requestValidator: validator,
     });
+  }
+
+  // For Checking if path already exists
+  private getOrCreateResource(
+    parent: apigateway.IResource,
+    part: string,
+  ): apigateway.IResource {
+    let existing = parent.getResource(part);
+    if (existing) {
+      return existing;
+    }
+    return parent.addResource(part);
   }
 }
