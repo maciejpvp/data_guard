@@ -46,6 +46,8 @@ export const configureApiGateway = (
     route: "vault/addItem",
     lambda: lambdas.addItem.lambdaFunction,
     name: `AddItem-${stage}`,
+    secured: true,
+    authorizer,
     requestSchema: addItemSchema,
   });
 

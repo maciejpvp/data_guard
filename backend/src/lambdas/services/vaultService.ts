@@ -1,3 +1,4 @@
+import { VaultItemType } from "../../../../shared/types";
 import { docClient } from "../utils/dynamoClient";
 import { QueryCommand } from "@aws-sdk/lib-dynamodb";
 
@@ -9,7 +10,7 @@ type GetItemsByUserIdProps = {
 export const getItemsByUserId = async ({
   userId,
   tableName,
-}: GetItemsByUserIdProps) => {
+}: GetItemsByUserIdProps): Promise<VaultItemType[]> => {
   const command = new QueryCommand({
     TableName: tableName,
     KeyConditionExpression: "userId = :uid",
@@ -19,5 +20,8 @@ export const getItemsByUserId = async ({
   });
 
   const result = await docClient.send(command);
-  return result.Items || [];
+
+  return (result.Items as VaultItemType[]) || [];
 };
+
+export const insertItem = async () => {};
