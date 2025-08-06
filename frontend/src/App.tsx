@@ -1,5 +1,7 @@
 import { Navigate, Route, Routes } from "react-router-dom";
 import { useEffect } from "react";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 
 import { useAuthStore } from "./store/authStore";
 
@@ -25,13 +27,18 @@ function App() {
     };
   }, []);
 
+  const queryClient = new QueryClient();
+
   return (
-    <Routes>
-      <Route element={<IndexPage />} path="/" />
-      <Route element={<LoginPage />} path="/login" />
-      <Route element={<CallbackPage />} path="/callback" />
-      <Route element={<Navigate to="/login" />} path="*" />
-    </Routes>
+    <QueryClientProvider client={queryClient}>
+      <Routes>
+        <Route element={<IndexPage />} path="/" />
+        <Route element={<LoginPage />} path="/login" />
+        <Route element={<CallbackPage />} path="/callback" />
+        <Route element={<Navigate to="/login" />} path="*" />
+      </Routes>
+      <ReactQueryDevtools initialIsOpen={false} />
+    </QueryClientProvider>
   );
 }
 

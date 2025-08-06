@@ -26,6 +26,7 @@ export const useAuthStore = create<AuthState>((set) => ({
 
     if (idToken) {
       set({ idToken });
+      console.log(idToken);
     } else {
       localStorage.removeItem("refreshToken");
       window.location.pathname = "/login";
