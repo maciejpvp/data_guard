@@ -3,6 +3,7 @@ export type VaultItemType = {
   userId: string;
   name: string;
   url?: string;
-  type: "password" | "creditcard" | "token" | "note";
-  password: string;
+  type: "password" | "card" | "SSH Key" | "API Key" | "note";
+  secret: string;
+  favourite: boolean;
 };

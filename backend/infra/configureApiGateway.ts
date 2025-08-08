@@ -48,7 +48,7 @@ export const configureApiGateway = (
     name: `AddItem-${stage}`,
     secured: true,
     authorizer,
-    requestSchema: addItemSchema,
+    // requestSchema: addItemSchema,
   });
 
   new cdk.CfnOutput(stack, "ApiUrl", {

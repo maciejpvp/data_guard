@@ -2,7 +2,7 @@ import * as apigateway from "aws-cdk-lib/aws-apigateway";
 
 const schema: apigateway.JsonSchema = {
   type: apigateway.JsonSchemaType.OBJECT,
-  required: ["name", "type", "password"],
+  required: ["name", "type", "secret"],
   properties: {
     name: {
       type: apigateway.JsonSchemaType.STRING,
@@ -18,7 +18,7 @@ const schema: apigateway.JsonSchema = {
       type: apigateway.JsonSchemaType.STRING,
       enum: ["password", "creditcard", "token", "note"],
     },
-    password: {
+    secret: {
       type: apigateway.JsonSchemaType.STRING,
       minLength: 1,
       maxLength: 1000,

@@ -9,20 +9,20 @@ import {
   NavbarMenu,
   NavbarMenuItem,
 } from "@heroui/navbar";
-import { FaRegCircleUser } from "react-icons/fa6";
+import { Avatar } from "@heroui/avatar";
 
-import { Logo } from "./Logo";
+import { Logo } from "../Logo";
 
 import { siteConfig } from "@/config/site";
 import { ThemeSwitch } from "@/components/theme-switch";
 
 export const Navbar = () => {
   return (
-    <HeroUINavbar maxWidth="xl" position="sticky">
+    <HeroUINavbar className="mt-3" maxWidth="xl" position="sticky">
       <NavbarContent className="basis-1/5 sm:basis-full" justify="start">
         <NavbarBrand className="gap-3 max-w-fit">
           <Link
-            className="flex justify-start items-center gap-1"
+            className="flex justify-start mt-1 items-center gap-1"
             color="foreground"
             href="/"
           >
@@ -38,8 +38,8 @@ export const Navbar = () => {
       >
         <NavbarItem className="hidden sm:flex">
           <Button
-            className="text-default-600 bg-transparent"
-            startContent={<FaRegCircleUser size={22} />}
+            className="text-default-600 mt-1 bg-transparent"
+            startContent={<Avatar name="Oskar" />}
             variant="flat"
           />
         </NavbarItem>
