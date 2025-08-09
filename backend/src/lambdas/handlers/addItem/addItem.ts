@@ -17,14 +17,12 @@ const vaultDB = process.env.vaultDB;
 const dynamo = new DynamoDBClient();
 const docClient = DynamoDBDocumentClient.from(dynamo);
 
-type InsertableFields = "name" | "url" | "type" | "secret";
-type BodyType = Pick<VaultItemType, InsertableFields>;
+type BodyType = {
+  secret: string;
+};
 
 const bodySchema = Joi.object<BodyType>({
-  name: Joi.string().min(3).max(20).required(),
-  url: Joi.string().uri().min(1).max(1000),
-  type: Joi.string().valid("password", "creditcard", "token", "note"),
-  secret: Joi.string().min(1).max(1000).required(),
+  secret: Joi.string().min(1).max(10000).required(),
 });
 
 export const handler: Handler = async (
@@ -41,13 +39,14 @@ export const handler: Handler = async (
     });
   }
 
+  const { secret } = body;
+
   const { userId } = getCognitoUser(event);
 
   const newItem: VaultItemType = {
-    ...body,
     userId,
     id: uuidv4(),
-    favourite: false,
+    secret,
   };
 
   try {

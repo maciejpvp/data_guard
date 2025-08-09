@@ -1,3 +1,7 @@
+import { VaultItemType } from "../../../shared/types";
+
+import { DynamicField } from "@/components/AddItem/Forms/DynamicForm";
+
 const ENCRYPTION_ALGO = "AES-GCM";
 const KEY_LENGTH = 256;
 const IV_LENGTH = 12;
@@ -5,16 +9,20 @@ const IV_LENGTH = 12;
 function base64ToArrayBuffer(base64: string): ArrayBuffer {
   const binary = atob(base64);
   const bytes = new Uint8Array(binary.length);
+
   for (let i = 0; i < binary.length; i++) {
     bytes[i] = binary.charCodeAt(i);
   }
+
   return bytes.buffer;
 }
 
 function arrayBufferToBase64(buffer: ArrayBuffer): string {
   const bytes = new Uint8Array(buffer);
   let binary = "";
+
   bytes.forEach((b) => (binary += String.fromCharCode(b)));
+
   return btoa(binary);
 }
 
@@ -85,3 +93,21 @@ export async function decryptData(
 
   return new TextDecoder().decode(decryptedBuffer);
 }
+
+export const decryptList = async (masterKey: string, list: VaultItemType[]) => {
+  const key = await getKeyFromMaster(masterKey);
+
+  const decryptedList = await Promise.all(
+    list.map(async (item) => {
+      const decryptedItem: DynamicField = JSON.parse(
+        await decryptData(item.secret, key),
+      );
+
+      return decryptedItem;
+    }),
+  );
+
+  console.log(decryptedList);
+
+  return decryptedList;
+};

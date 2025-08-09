@@ -7,9 +7,13 @@ import {
 } from "@heroui/modal";
 import { Button } from "@heroui/button";
 import { Select, SelectItem } from "@heroui/select";
-import { useState } from "react";
+import { useRef, useState } from "react";
 
-import { IndexForm } from "./Forms/IndexForm";
+import { DynamicForm } from "./Forms/DynamicForm";
+import { templates } from "./Forms/templates";
+
+import { encryptData, getKeyFromMaster } from "@/utils/crypto";
+import { vaultApi } from "@/api/vault";
 
 export const types = [
   { key: "password", label: "Password" },
@@ -28,9 +32,28 @@ type Props = {
 
 export const AddItemModal = ({ isOpen, onOpenChange }: Props) => {
   const [type, setType] = useState<Type>(types[0].key);
+  const submitButtonRef = useRef<HTMLButtonElement | null>(null);
 
   const handleSelectionChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setType(e.target.value);
+    const newValue: Type = e.target.value as Type;
+
+    setType(newValue);
+  };
+
+  const handleCreateButton = () => {
+    if (!submitButtonRef.current) return;
+
+    submitButtonRef.current.click();
+  };
+
+  const handleSubmit = async (form: string) => {
+    console.log(form);
+    const key = await getKeyFromMaster("my-master123");
+
+    const encrypted = await encryptData(form, key);
+
+    console.log(encrypted);
+    vaultApi.addItem(encrypted);
   };
 
   return (
@@ -50,13 +73,17 @@ export const AddItemModal = ({ isOpen, onOpenChange }: Props) => {
                   <SelectItem key={type.key}>{type.label}</SelectItem>
                 ))}
               </Select>
-              <IndexForm type={type} />
+              <DynamicForm
+                fields={templates[type] ?? templates.password}
+                submitButtonRef={submitButtonRef}
+                onSubmit={(e) => handleSubmit(JSON.stringify(e))}
+              />
             </ModalBody>
             <ModalFooter>
               <Button color="danger" variant="light" onPress={onClose}>
                 Cancel
               </Button>
-              <Button color="primary" onPress={onClose}>
+              <Button color="primary" onPress={handleCreateButton}>
                 Create
               </Button>
             </ModalFooter>

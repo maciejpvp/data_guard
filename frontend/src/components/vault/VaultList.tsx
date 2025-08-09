@@ -1,21 +1,19 @@
-import { VaultItemType } from "../../../../shared/types";
 import { AddItemButton } from "../AddItem/AddItemButton";
+import { DynamicField } from "../AddItem/Forms/DynamicForm";
 
-import { useGetList } from "@/hooks/queries/vault/useGetList";
+import { VaultItem } from "./VaultItem";
 
-export const VaultList = () => {
-  const { data, isLoading } = useGetList();
+type Props = {
+  list: DynamicField[][];
+};
 
-  if (isLoading) <p>Loading...</p>;
-
-  const list: VaultItemType[] = data?.data.list ?? [];
-
+export const VaultList = ({ list }: Props) => {
   return (
     <div className="flex flex-col gap-4">
       <AddItemButton />
       <ul>
-        {list.map((item) => (
-          <li key={item.id}>{item.name}</li>
+        {list.map((items, index) => (
+          <VaultItem key={index} items={items} />
         ))}
       </ul>
     </div>

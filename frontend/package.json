@@ -12,6 +12,7 @@
   "dependencies": {
     "@heroui/avatar": "^2.2.20",
     "@heroui/button": "^2.2.24",
+    "@heroui/card": "^2.2.23",
     "@heroui/code": "^2.2.18",
     "@heroui/dropdown": "^2.3.24",
     "@heroui/form": "^2.1.24",
@@ -36,6 +37,7 @@
     "axios": "^1.11.0",
     "clsx": "2.1.1",
     "framer-motion": "11.18.2",
+    "jwt-decode": "^4.0.0",
     "react": "18.3.1",
     "react-dom": "18.3.1",
     "react-icons": "^5.5.0",

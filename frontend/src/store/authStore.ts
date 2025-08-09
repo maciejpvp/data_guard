@@ -1,16 +1,30 @@
 import { create } from "zustand";
+import { jwtDecode } from "jwt-decode";
 
 import { refreshSession } from "@/utils/auth";
 
-interface AuthState {
+type User = {
+  name: string;
+  email: string;
+  avatar: string;
+};
+
+interface GoogleIdTokenPayload {
+  given_name?: string;
+  email?: string;
+  picture?: string;
+}
+
+type AuthState = {
   idToken: string;
+  user: User | undefined;
   login: () => Promise<void>;
   refresh: () => Promise<void>;
-}
+};
 
 export const useAuthStore = create<AuthState>((set) => ({
   idToken: "",
-
+  user: undefined,
   login: async () => {
     const refreshToken = localStorage.getItem("refreshToken");
 
@@ -27,6 +41,15 @@ export const useAuthStore = create<AuthState>((set) => ({
     if (idToken) {
       set({ idToken });
       console.log(idToken);
+      const decoded = jwtDecode<GoogleIdTokenPayload>(idToken);
+
+      set({
+        user: {
+          name: decoded?.given_name ?? "",
+          email: decoded?.email ?? "",
+          avatar: decoded?.picture ?? "",
+        },
+      });
     } else {
       localStorage.removeItem("refreshToken");
       window.location.pathname = "/login";

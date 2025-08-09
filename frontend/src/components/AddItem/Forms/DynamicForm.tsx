@@ -1,69 +1,88 @@
+import React, { useState } from "react";
 import { Form } from "@heroui/form";
 import { Input, Textarea } from "@heroui/input";
 import { Button } from "@heroui/button";
-import { ReactNode } from "react";
 
-type FieldType = "text" | "textarea" | "password" | "email" | "url";
+type FieldType = "text" | "number" | "email" | "password" | "url" | "textarea";
 
-export type FieldConfig = {
+export interface DynamicField {
   key: string;
   label: string;
-  type?: FieldType;
+  type: FieldType;
+  defaultValue?: string;
   isRequired?: boolean;
   placeholder?: string;
-  validate?: (value: string) => string | null;
-};
+  validation?: {
+    pattern?: RegExp;
+    message?: string;
+  };
+}
 
-type DynamicFormProps = {
-  fields: FieldConfig[];
-  onSubmit?: (data: Record<string, string>) => void;
-  submitLabel?: string;
-  extraButtons?: ReactNode;
-};
+interface DynamicFormProps {
+  fields: DynamicField[];
+  onSubmit: (updatedFields: DynamicField[]) => void;
+  submitButtonRef: React.MutableRefObject<HTMLButtonElement | null>;
+}
 
-export const DynamicForm = ({
+export const DynamicForm: React.FC<DynamicFormProps> = ({
   fields,
   onSubmit,
-  submitLabel = "Submit",
-  extraButtons,
-}: DynamicFormProps) => {
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    const formData = new FormData(event.currentTarget);
-    const values = Object.fromEntries(formData.entries()) as Record<
-      string,
-      string
-    >;
+  submitButtonRef,
+}) => {
+  const [values, setValues] = useState<Record<string, string>>(
+    fields.reduce(
+      (acc, field) => {
+        acc[field.key] = field.defaultValue || "";
 
-    onSubmit?.(values);
+        return acc;
+      },
+      {} as Record<string, string>,
+    ),
+  );
+
+  const handleChange = (key: string, value: string) => {
+    setValues((prev) => ({ ...prev, [key]: value }));
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+
+    const updatedFields = fields.map((field) => ({
+      ...field,
+      defaultValue: values[field.key],
+    }));
+
+    onSubmit(updatedFields);
   };
 
   return (
-    <Form validationBehavior="aria" onSubmit={handleSubmit}>
+    <Form className="flex flex-col gap-4 w-full" onSubmit={handleSubmit}>
       {fields.map((field) => {
         const commonProps = {
-          key: field.key,
-          name: field.key,
           label: field.label,
-          labelPlacement: "outside-top" as const,
-          placeholder: field.placeholder,
+          value: values[field.key],
+          onChange: (
+            e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+          ) => handleChange(field.key, e.target.value),
           isRequired: field.isRequired,
-          validate: field.validate,
+          placeholder: field.placeholder,
         };
 
         if (field.type === "textarea") {
           return <Textarea {...commonProps} key={field.key} />;
         }
 
-        return (
-          <Input type={field.type || "text"} {...commonProps} key={field.key} />
-        );
+        return <Input {...commonProps} key={field.key} type={field.type} />;
       })}
 
-      <div className="flex gap-2 mt-4">
-        <Button type="submit">{submitLabel}</Button>
-        {extraButtons}
-      </div>
+      <Button
+        ref={submitButtonRef}
+        className="hidden"
+        color="primary"
+        type="submit"
+      >
+        Submit
+      </Button>
     </Form>
   );
 };
