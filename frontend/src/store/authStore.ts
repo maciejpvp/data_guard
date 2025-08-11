@@ -29,7 +29,8 @@ export const useAuthStore = create<AuthState>((set) => ({
     const refreshToken = localStorage.getItem("refreshToken");
 
     if (!refreshToken) {
-      if (window.location.pathname !== "/login") {
+      // # List of endpoints that doesnt need auth
+      if (!["/login", "/callback"].includes(window.location.pathname)) {
         window.location.pathname = "/login";
       }
 
@@ -40,7 +41,6 @@ export const useAuthStore = create<AuthState>((set) => ({
 
     if (idToken) {
       set({ idToken });
-      console.log(idToken);
       const decoded = jwtDecode<GoogleIdTokenPayload>(idToken);
 
       set({

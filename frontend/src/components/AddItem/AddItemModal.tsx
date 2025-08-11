@@ -12,7 +12,7 @@ import { useRef, useState } from "react";
 import { DynamicForm } from "./Forms/DynamicForm";
 import { templates } from "./Forms/templates";
 
-import { encryptData, getKeyFromMaster } from "@/utils/crypto";
+import { encryptData } from "@/utils/crypto";
 import { vaultApi } from "@/api/vault";
 
 export const types = [
@@ -47,12 +47,8 @@ export const AddItemModal = ({ isOpen, onOpenChange }: Props) => {
   };
 
   const handleSubmit = async (form: string) => {
-    console.log(form);
-    const key = await getKeyFromMaster("my-master123");
+    const encrypted = await encryptData(form);
 
-    const encrypted = await encryptData(form, key);
-
-    console.log(encrypted);
     vaultApi.addItem(encrypted);
   };
 

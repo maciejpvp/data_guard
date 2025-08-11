@@ -1,10 +1,19 @@
 import AuthLayout from "@/layouts/auth";
 import { useAuthStore } from "@/store/authStore";
+import { useCryptoStore } from "@/store/cryptoStore";
 
-export const MasterkeyPage = () => {
+type Props = {
+  testValue: string;
+};
+
+export const MasterkeyPage = ({ testValue }: Props) => {
   const user = useAuthStore((store) => store.user);
+  const setKey = useCryptoStore((store) => store.setKey);
 
-  console.log(user);
+  const handleSubmit = async () => {
+    const isCorrect = await setKey("SuperHaslo123_!", testValue);
+    console.log(isCorrect);
+  };
 
   return (
     <AuthLayout>
@@ -12,7 +21,8 @@ export const MasterkeyPage = () => {
         Data_Guard
       </h1>
       <div className="flex flex-col items-center justify-center min-h-[40vh] px-4">
-        <p className="text-sm text-muted mb-5">Welcome back</p>
+        <p className="text-sm text-muted mb-5">Welcome back, {user?.name}</p>
+        <button onClick={handleSubmit}>Login</button>
       </div>
     </AuthLayout>
   );

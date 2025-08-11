@@ -1,5 +1,6 @@
 import { VaultItemType } from "../../../shared/types";
 
+import { useCryptoStore } from "@/store/cryptoStore";
 import { DynamicField } from "@/components/AddItem/Forms/DynamicForm";
 
 const ENCRYPTION_ALGO = "AES-GCM";
@@ -54,8 +55,10 @@ export async function getKeyFromMaster(masterKey: string): Promise<CryptoKey> {
 
 export async function encryptData(
   plainText: string,
-  key: CryptoKey,
+  key: CryptoKey = useCryptoStore.getState().key as CryptoKey,
 ): Promise<string> {
+  if (!key) return "Invalid Key";
+
   const iv = crypto.getRandomValues(new Uint8Array(IV_LENGTH));
   const encoded = new TextEncoder().encode(plainText);
 
@@ -76,8 +79,10 @@ export async function encryptData(
 
 export async function decryptData(
   cipherText: string,
-  key: CryptoKey,
+  key: CryptoKey = useCryptoStore.getState().key as CryptoKey,
 ): Promise<string> {
+  if (!key) return "Invalid Key";
+
   const [ivBase64, cipherBase64] = cipherText.split(":");
   const iv = new Uint8Array(base64ToArrayBuffer(ivBase64));
   const cipherBuffer = base64ToArrayBuffer(cipherBase64);
@@ -94,20 +99,28 @@ export async function decryptData(
   return new TextDecoder().decode(decryptedBuffer);
 }
 
-export const decryptList = async (masterKey: string, list: VaultItemType[]) => {
-  const key = await getKeyFromMaster(masterKey);
-
+export const decryptList = async (list: VaultItemType[]) => {
   const decryptedList = await Promise.all(
     list.map(async (item) => {
-      const decryptedItem: DynamicField = JSON.parse(
-        await decryptData(item.secret, key),
+      const decryptedItem: DynamicField[] = JSON.parse(
+        await decryptData(item.secret),
       );
 
       return decryptedItem;
     }),
   );
 
-  console.log(decryptedList);
-
   return decryptedList;
+};
+
+export const checkKey = async (key: CryptoKey, test: string) => {
+  try {
+    const decrypted = await decryptData(test, key);
+
+    if (decrypted !== "Valid") throw new Error();
+  } catch {
+    return false;
+  }
+
+  return true;
 };

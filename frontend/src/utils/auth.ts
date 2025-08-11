@@ -44,7 +44,7 @@ export const exchangeCodeForToken = async (code: string): Promise<void> => {
     localStorage.setItem("refreshToken", data.refresh_token);
   }
 
-  window.location.href = "/drive";
+  window.location.href = "/";
 };
 
 export const refreshSession = async (

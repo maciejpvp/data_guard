@@ -15,7 +15,7 @@ export const CallbackPage = () => {
     const refreshToken = localStorage.getItem("refreshToken");
 
     if (refreshToken) {
-      window.location.href = "/drive";
+      window.location.href = "/";
 
       return;
     }
