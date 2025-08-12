@@ -11,6 +11,7 @@ import DefaultLayout from "@/layouts/default";
 import { decryptList } from "@/utils/crypto";
 import { DynamicField } from "@/components/AddItem/Forms/DynamicForm";
 import { useCryptoStore } from "@/store/cryptoStore";
+import { LoadingPage } from "./loading";
 
 export const IndexPage = () => {
   const { data, isLoading } = useGetList();
@@ -42,7 +43,7 @@ export const IndexPage = () => {
     if (doesVaultExists && key) async();
   }, [list, key, doesVaultExists]);
 
-  if (isLoading) return <p>Loading...</p>;
+  if (isLoading) return <LoadingPage />;
 
   if (!doesVaultExists) return <CreateVaultPage />;
 

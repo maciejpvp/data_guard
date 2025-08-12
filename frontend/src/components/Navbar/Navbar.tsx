@@ -15,8 +15,11 @@ import { Logo } from "../Logo";
 
 import { siteConfig } from "@/config/site";
 import { ThemeSwitch } from "@/components/theme-switch";
+import { useAuthStore } from "@/store/authStore";
 
 export const Navbar = () => {
+  const user = useAuthStore((store) => store.user);
+
   return (
     <HeroUINavbar className="mt-3" maxWidth="xl" position="sticky">
       <NavbarContent className="basis-1/5 sm:basis-full" justify="start">
@@ -39,7 +42,13 @@ export const Navbar = () => {
         <NavbarItem className="hidden sm:flex">
           <Button
             className="text-default-600 mt-1 bg-transparent"
-            startContent={<Avatar name="Oskar" />}
+            startContent={
+              <Avatar
+                className="border-1 border-default"
+                name={user?.name}
+                src={user?.avatar}
+              />
+            }
             variant="flat"
           />
         </NavbarItem>

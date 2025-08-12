@@ -11,9 +11,9 @@ export const VaultList = ({ list }: Props) => {
   return (
     <div className="flex flex-col gap-4">
       <AddItemButton />
-      <ul>
-        {list.map((items, index) => (
-          <VaultItem key={index} items={items} />
+      <ul className="flex flex-col gap-4">
+        {list.map((item, index) => (
+          <VaultItem key={index} item={item} />
         ))}
       </ul>
     </div>
