@@ -60,5 +60,10 @@ export const handler: Handler = async (
     return sendResponse(500, err);
   }
 
-  return sendResponse(200, { body });
+  return sendResponse(200, {
+    message: "Successfully added item.",
+    data: {
+      newItem,
+    },
+  });
 };
