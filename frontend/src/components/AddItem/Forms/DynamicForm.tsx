@@ -22,12 +22,14 @@ interface DynamicFormProps {
   fields: DynamicField[];
   onSubmit: (updatedFields: DynamicField[]) => void;
   submitButtonRef: React.MutableRefObject<HTMLButtonElement | null>;
+  isDisabled: boolean;
 }
 
 export const DynamicForm: React.FC<DynamicFormProps> = ({
   fields,
   onSubmit,
   submitButtonRef,
+  isDisabled,
 }) => {
   const [values, setValues] = useState<Record<string, string>>(
     fields.reduce(
@@ -72,7 +74,14 @@ export const DynamicForm: React.FC<DynamicFormProps> = ({
           return <Textarea {...commonProps} key={field.key} />;
         }
 
-        return <Input {...commonProps} key={field.key} type={field.type} />;
+        return (
+          <Input
+            {...commonProps}
+            key={field.key}
+            isDisabled={isDisabled}
+            type={field.type}
+          />
+        );
       })}
 
       <Button
