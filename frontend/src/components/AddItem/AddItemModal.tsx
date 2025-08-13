@@ -32,7 +32,7 @@ type Props = {
 
 export const AddItemModal = ({ isOpen, onOpenChange }: Props) => {
   const [type, setType] = useState<Type>(types[0].key);
-  const closeButtonRef = useRef<HTMLButtonElement | null>(null);
+  const onCloseRef = useRef<() => void | null>(null!);
   const submitButtonRef = useRef<HTMLButtonElement | null>(null);
   const { mutate: submitItem, isPending } = useAddItem();
 
@@ -53,10 +53,7 @@ export const AddItemModal = ({ isOpen, onOpenChange }: Props) => {
 
     submitItem(encrypted, {
       onSettled: () => {
-        if (!closeButtonRef.current) return;
-        closeButtonRef.current.click();
-
-        console.log("test");
+        onCloseRef?.current?.();
       },
     });
   };
@@ -64,53 +61,54 @@ export const AddItemModal = ({ isOpen, onOpenChange }: Props) => {
   return (
     <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
       <ModalContent>
-        {(onClose) => (
-          <>
-            <ModalHeader className="flex flex-col gap-1">Add Item</ModalHeader>
-            <ModalBody className="flex flex-col justify-center items-start">
-              <Select
-                defaultSelectedKeys={["password"]}
-                isDisabled={isPending}
-                label="Type"
-                placeholder="Select Type"
-                onChange={handleSelectionChange}
-              >
-                {types.map((type) => (
-                  <SelectItem key={type.key}>{type.label}</SelectItem>
-                ))}
-              </Select>
-              <DynamicForm
-                fields={templates[type] ?? templates.password}
-                isDisabled={isPending}
-                submitButtonRef={submitButtonRef}
-                onSubmit={(e) => handleSubmit(JSON.stringify(e))}
-              />
-            </ModalBody>
-            <ModalFooter>
-              <Button
-                color="danger"
-                isDisabled={isPending}
-                variant="light"
-                onPress={onClose}
-              >
-                Cancel
-              </Button>
-              <Button
-                color="primary"
-                isDisabled={isPending}
-                isLoading={isPending}
-                onPress={handleCreateButton}
-              >
-                Create
-              </Button>
-              <button
-                ref={closeButtonRef}
-                className="hidden"
-                onClick={onClose}
-              />
-            </ModalFooter>
-          </>
-        )}
+        {(onClose) => {
+          onCloseRef.current = onClose;
+
+          return (
+            <>
+              <ModalHeader className="flex flex-col gap-1">
+                Add Item
+              </ModalHeader>
+              <ModalBody className="flex flex-col justify-center items-start">
+                <Select
+                  defaultSelectedKeys={["password"]}
+                  isDisabled={isPending}
+                  label="Type"
+                  placeholder="Select Type"
+                  onChange={handleSelectionChange}
+                >
+                  {types.map((type) => (
+                    <SelectItem key={type.key}>{type.label}</SelectItem>
+                  ))}
+                </Select>
+                <DynamicForm
+                  fields={templates[type] ?? templates.password}
+                  isDisabled={isPending}
+                  submitButtonRef={submitButtonRef}
+                  onSubmit={(e) => handleSubmit(JSON.stringify(e))}
+                />
+              </ModalBody>
+              <ModalFooter>
+                <Button
+                  color="danger"
+                  isDisabled={isPending}
+                  variant="light"
+                  onPress={onClose}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  color="primary"
+                  isDisabled={isPending}
+                  isLoading={isPending}
+                  onPress={handleCreateButton}
+                >
+                  Create
+                </Button>
+              </ModalFooter>
+            </>
+          );
+        }}
       </ModalContent>
     </Modal>
   );
