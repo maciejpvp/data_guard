@@ -5,13 +5,14 @@ import {
   DropdownMenu,
   DropdownItem,
 } from "@heroui/dropdown";
+import { useDisclosure } from "@heroui/use-disclosure";
 import { addToast } from "@heroui/toast";
 import { SlOptionsVertical } from "react-icons/sl";
 import { FaRegCopy } from "react-icons/fa";
 import { FaArrowUpRightFromSquare } from "react-icons/fa6";
 import { IoTrashBin } from "react-icons/io5";
 
-import { useDeleteItem } from "@/hooks/mutations/useDeleteItem";
+import { DeleteConfirmModal } from "./DeleteConfirmModal";
 
 type Props = {
   id: string;
@@ -21,7 +22,12 @@ type Props = {
 };
 
 export const VaultItemDropdown = ({ id, username, password, url }: Props) => {
-  const { mutate: deleteItem } = useDeleteItem();
+  const {
+    isOpen: isOpenDeleteConfirmModal,
+    onOpen: onOpenDeleteConfirmModal,
+    onOpenChange: onOpenChangeDeleteConfirmModal,
+  } = useDisclosure();
+
   const iconClasses = "text-xl text-default-500 pointer-events-none shrink-0";
   const copyToClipboard = (text: string) => {
     navigator.clipboard.writeText(text);
@@ -77,32 +83,37 @@ export const VaultItemDropdown = ({ id, username, password, url }: Props) => {
     {
       key: "delete",
       label: "Delete",
-      onClick: () => {
-        deleteItem(id);
-      },
+      onClick: () => onOpenDeleteConfirmModal(),
       startContent: <IoTrashBin className={iconClasses} />,
     },
   ];
 
   return (
-    <Dropdown>
-      <DropdownTrigger>
-        <Button className="border-0 bg-transparent">
-          <SlOptionsVertical />
-        </Button>
-      </DropdownTrigger>
-      <DropdownMenu aria-label="Dynamic Actions" items={passwordDropdown}>
-        {(item) => (
-          <DropdownItem
-            {...item}
-            key={item.key}
-            className={item.key === "delete" ? "text-danger" : ""}
-            color={item.key === "delete" ? "danger" : "default"}
-          >
-            {item.label}
-          </DropdownItem>
-        )}
-      </DropdownMenu>
-    </Dropdown>
+    <>
+      <Dropdown>
+        <DropdownTrigger>
+          <Button className="border-0 bg-transparent">
+            <SlOptionsVertical />
+          </Button>
+        </DropdownTrigger>
+        <DropdownMenu aria-label="Dynamic Actions" items={passwordDropdown}>
+          {(item) => (
+            <DropdownItem
+              {...item}
+              key={item.key}
+              className={item.key === "delete" ? "text-danger" : ""}
+              color={item.key === "delete" ? "danger" : "default"}
+            >
+              {item.label}
+            </DropdownItem>
+          )}
+        </DropdownMenu>
+      </Dropdown>
+      <DeleteConfirmModal
+        id={id}
+        isOpen={isOpenDeleteConfirmModal}
+        onOpenChange={onOpenChangeDeleteConfirmModal}
+      />
+    </>
   );
 };
