@@ -3,6 +3,7 @@ import { DynamicField } from "../AddItem/Forms/DynamicForm";
 import { Card, CardBody } from "@heroui/card";
 import { CiGlobe } from "react-icons/ci";
 import { VaultItemDropdown } from "./VaultItemDropdown";
+import { user } from "@heroui/theme";
 
 type Props = {
   item: DynamicField[];
@@ -66,21 +67,24 @@ export const VaultItem = ({ item }: Props) => {
   const url = getField("url")?.defaultValue;
   const note = getField("note")?.defaultValue;
 
-  const copyToClipboard = (text: string) => {
-    navigator.clipboard.writeText(text);
-  };
-
   return (
     <li>
       <Card>
-        <CardBody className="ml-3 flex flex-row items-center gap-6">
-          {url ? <GetIcon url={url} /> : <CiGlobe size={36} />}
-          <div>
-            <h1 className="text-lg text-blue-400 font-semibold">
-              {url ? (url.split("://").at(1) ?? url) : name}
-            </h1>
-            <p className="text-default-600">{username}</p>
+        <CardBody className="ml-3 flex flex-row items-center justify-between gap-6">
+          <div className="flex flex-row items-center gap-6">
+            {url ? <GetIcon url={url} /> : <CiGlobe size={36} />}
+            <div>
+              <h1 className="text-lg text-blue-400 font-semibold">
+                {url ? (url.split("://").at(1) ?? url) : name}
+              </h1>
+              <p className="text-default-600">{username}</p>
+            </div>
           </div>
+          <VaultItemDropdown
+            password={password ?? ""}
+            url={url}
+            username={username ?? ""}
+          />
         </CardBody>
       </Card>
     </li>
