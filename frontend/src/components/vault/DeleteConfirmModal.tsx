@@ -7,6 +7,7 @@ import {
   ModalBody,
   ModalFooter,
 } from "@heroui/modal";
+import { useRef } from "react";
 
 type Props = {
   id: string;
@@ -15,35 +16,57 @@ type Props = {
 };
 
 export const DeleteConfirmModal = ({ id, isOpen, onOpenChange }: Props) => {
-  const { mutate: deleteItem } = useDeleteItem();
+  const { mutate: deleteItem, isPending } = useDeleteItem();
+
+  const onCloseRef = useRef<() => void | null>(null!);
 
   const handleDelete = () => {
-    deleteItem(id);
+    deleteItem(id, {
+      onSettled: () => {
+        onCloseRef?.current?.();
+      },
+    });
   };
 
   return (
     <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
       <ModalContent>
-        {(onClose) => (
-          <>
-            <ModalHeader className="text-default-800">Delete Item</ModalHeader>
-            <ModalBody>
-              <p className="text-default-600 text-sm">
-                This action <strong>cannot</strong> be undone. All data
-                associated with this item will be lost forever and cannot be
-                recovered.
-              </p>
-            </ModalBody>
-            <ModalFooter>
-              <Button color="default" variant="light" onPress={onClose}>
-                Cancel
-              </Button>
-              <Button color="danger" onPress={handleDelete}>
-                Delete
-              </Button>
-            </ModalFooter>
-          </>
-        )}
+        {(onClose) => {
+          onCloseRef.current = onClose;
+
+          return (
+            <>
+              <ModalHeader className="text-default-800">
+                Delete Item
+              </ModalHeader>
+              <ModalBody>
+                <p className="text-default-600 text-sm">
+                  This action <strong>cannot</strong> be undone. All data
+                  associated with this item will be lost forever and cannot be
+                  recovered.
+                </p>
+              </ModalBody>
+              <ModalFooter>
+                <Button
+                  color="default"
+                  isDisabled={isPending}
+                  variant="light"
+                  onPress={onClose}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  color="danger"
+                  isDisabled={isPending}
+                  isLoading={isPending}
+                  onPress={handleDelete}
+                >
+                  Delete
+                </Button>
+              </ModalFooter>
+            </>
+          );
+        }}
       </ModalContent>
     </Modal>
   );
