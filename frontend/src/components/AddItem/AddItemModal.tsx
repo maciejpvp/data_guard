@@ -13,7 +13,7 @@ import { DynamicForm } from "./Forms/DynamicForm";
 import { templates } from "./Forms/templates";
 
 import { encryptData } from "@/utils/crypto";
-import { vaultApi } from "@/api/vault";
+import { useAddItem } from "@/hooks/mutations/useAddItem";
 
 export const types = [
   { key: "password", label: "Password" },
@@ -33,6 +33,7 @@ type Props = {
 export const AddItemModal = ({ isOpen, onOpenChange }: Props) => {
   const [type, setType] = useState<Type>(types[0].key);
   const submitButtonRef = useRef<HTMLButtonElement | null>(null);
+  const { mutate: submitItem } = useAddItem();
 
   const handleSelectionChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const newValue: Type = e.target.value as Type;
@@ -49,7 +50,7 @@ export const AddItemModal = ({ isOpen, onOpenChange }: Props) => {
   const handleSubmit = async (form: string) => {
     const encrypted = await encryptData(form);
 
-    vaultApi.addItem(encrypted);
+    submitItem(encrypted);
   };
 
   return (

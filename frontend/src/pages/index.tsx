@@ -1,25 +1,23 @@
 import { useEffect, useState } from "react";
 
-import { VaultItemType } from "../../../shared/types";
-
 import { CreateVaultPage } from "./createvault";
 import { MasterkeyPage } from "./masterkey";
+import { LoadingPage } from "./loading";
 
 import { VaultList } from "@/components/vault/VaultList";
 import { useGetList } from "@/hooks/queries/vault/useGetList";
 import DefaultLayout from "@/layouts/default";
 import { decryptList } from "@/utils/crypto";
-import { DynamicField } from "@/components/AddItem/Forms/DynamicForm";
 import { useCryptoStore } from "@/store/cryptoStore";
-import { LoadingPage } from "./loading";
+import { DecryptedItem } from "@/types";
 
 export const IndexPage = () => {
   const { data, isLoading } = useGetList();
   const [doesVaultExists, setDoesVaultExists] = useState<string | false>(false);
 
-  const list: VaultItemType[] = data?.data.list ?? [];
+  const list = data ?? [];
 
-  const [decryptedList, setDecryptedList] = useState<DynamicField[][]>([]);
+  const [decryptedList, setDecryptedList] = useState<DecryptedItem[]>([]);
   const key = useCryptoStore((store) => store.key);
 
   useEffect(() => {

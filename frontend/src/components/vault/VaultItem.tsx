@@ -1,12 +1,13 @@
 import { useEffect, useRef, useState } from "react";
-import { DynamicField } from "../AddItem/Forms/DynamicForm";
 import { Card, CardBody } from "@heroui/card";
 import { CiGlobe } from "react-icons/ci";
+
 import { VaultItemDropdown } from "./VaultItemDropdown";
-import { user } from "@heroui/theme";
+
+import { DecryptedItem } from "@/types";
 
 type Props = {
-  item: DynamicField[];
+  item: DecryptedItem;
 };
 
 type GetIconProps = {
@@ -59,13 +60,13 @@ export const GetIcon = ({ url, size = 36 }: GetIconProps) => {
 };
 
 export const VaultItem = ({ item }: Props) => {
-  const getField = (key: string) => item.find((f) => f.key === key);
+  const getField = (key: string) => item.item.find((f) => f.key === key);
 
   const name = getField("name")?.defaultValue || "(No name)";
   const username = getField("username")?.defaultValue;
   const password = getField("password")?.defaultValue;
   const url = getField("url")?.defaultValue;
-  const note = getField("note")?.defaultValue;
+  // const note = getField("note")?.defaultValue;
 
   return (
     <li>
@@ -81,6 +82,7 @@ export const VaultItem = ({ item }: Props) => {
             </div>
           </div>
           <VaultItemDropdown
+            id={item.id}
             password={password ?? ""}
             url={url}
             username={username ?? ""}

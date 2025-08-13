@@ -1,10 +1,11 @@
 import { AddItemButton } from "../AddItem/AddItemButton";
-import { DynamicField } from "../AddItem/Forms/DynamicForm";
 
 import { VaultItem } from "./VaultItem";
 
+import { DecryptedItem } from "@/types";
+
 type Props = {
-  list: DynamicField[][];
+  list: DecryptedItem[];
 };
 
 export const VaultList = ({ list }: Props) => {

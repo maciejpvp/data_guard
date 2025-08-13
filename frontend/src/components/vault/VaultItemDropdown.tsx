@@ -3,22 +3,25 @@ import {
   Dropdown,
   DropdownTrigger,
   DropdownMenu,
-  DropdownSection,
   DropdownItem,
 } from "@heroui/dropdown";
+import { addToast } from "@heroui/toast";
 import { SlOptionsVertical } from "react-icons/sl";
 import { FaRegCopy } from "react-icons/fa";
 import { FaArrowUpRightFromSquare } from "react-icons/fa6";
 import { IoTrashBin } from "react-icons/io5";
-import { addToast } from "@heroui/toast";
+
+import { useDeleteItem } from "@/hooks/mutations/useDeleteItem";
 
 type Props = {
+  id: string;
   username: string;
   password: string;
   url?: string;
 };
 
-export const VaultItemDropdown = ({ username, password, url }: Props) => {
+export const VaultItemDropdown = ({ id, username, password, url }: Props) => {
+  const { mutate: deleteItem } = useDeleteItem();
   const iconClasses = "text-xl text-default-500 pointer-events-none shrink-0";
   const copyToClipboard = (text: string) => {
     navigator.clipboard.writeText(text);
@@ -74,6 +77,9 @@ export const VaultItemDropdown = ({ username, password, url }: Props) => {
     {
       key: "delete",
       label: "Delete",
+      onClick: () => {
+        deleteItem(id);
+      },
       startContent: <IoTrashBin className={iconClasses} />,
     },
   ];

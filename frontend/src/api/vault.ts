@@ -6,4 +6,5 @@ export const vaultApi = {
     apiClient.post("/vault/addItem", {
       secret,
     }),
+  deleteItem: (id: string) => apiClient.delete(`/vault/deleteItem/${id}`),
 };

@@ -9,7 +9,7 @@ export const useGetList = () => {
     queryFn: async () => {
       const response = await vaultApi.getList();
 
-      return response.data;
+      return response.data.data.list;
     },
     staleTime: 5 * 60 * 1000,
   });

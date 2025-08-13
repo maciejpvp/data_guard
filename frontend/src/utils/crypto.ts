@@ -106,7 +106,7 @@ export const decryptList = async (list: VaultItemType[]) => {
         await decryptData(item.secret),
       );
 
-      return decryptedItem;
+      return { id: item.id, userId: item.userId, item: decryptedItem };
     }),
   );
 

@@ -5,24 +5,20 @@ import { VaultItemType } from "../../../../shared/types";
 import { vaultApi } from "@/api/vault";
 import { queryKeys } from "@/constants/queryKeys";
 
-export const useAddItem = () => {
+export const useDeleteItem = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (secret: string) => {
-      const response = await vaultApi.addItem(secret);
+    mutationFn: async (id: string) => {
+      const response = await vaultApi.deleteItem(id);
 
       return response.data;
     },
-    onSuccess: (data) => {
-      const newItem = data.data.newItem;
-
+    onSuccess: (_data, id) => {
       queryClient.setQueryData(
         queryKeys.vault.itemList,
         (oldItems: VaultItemType[]) => {
-          if (!oldItems) return [newItem];
-
-          return [...oldItems, newItem];
+          return [...oldItems.filter((item) => item.id !== id)];
         },
       );
     },
