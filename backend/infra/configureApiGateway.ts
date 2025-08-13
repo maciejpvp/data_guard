@@ -51,6 +51,16 @@ export const configureApiGateway = (
     // requestSchema: addItemSchema,
   });
 
+  new ApiRoute(stack, `DeleteItemRoute-${stage}`, {
+    api,
+    type: "DELETE",
+    route: "vault/deleteItem/{id}",
+    lambda: lambdas.deleteItem.lambdaFunction,
+    name: `DeleteItem-${stage}`,
+    secured: true,
+    authorizer,
+  });
+
   new cdk.CfnOutput(stack, "ApiUrl", {
     value: api.url,
   });

@@ -33,8 +33,21 @@ export const createLambdas = (stack: Stack, props: Props) => {
     ],
   });
 
+  const deleteItem = new CreateLambda(stack, `DeleteItemLambda-${stage}`, {
+    name: "deleteItem",
+    stage,
+    resources: [
+      {
+        grant: (fn) => vaultDB.grantWriteData(fn),
+        envName: "vaultDB",
+        envValue: vaultDB.tableName,
+      },
+    ],
+  });
+
   return {
     getList,
     addItem,
+    deleteItem,
   };
 };
