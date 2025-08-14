@@ -5,21 +5,27 @@ import {
   DropdownMenu,
   DropdownItem,
 } from "@heroui/dropdown";
+
 import { useDisclosure } from "@heroui/use-disclosure";
 import { addToast } from "@heroui/toast";
 import { SlOptionsVertical } from "react-icons/sl";
-import { FaRegCopy } from "react-icons/fa";
+import { FaRegCopy, FaRegEye } from "react-icons/fa";
 import { FaArrowUpRightFromSquare } from "react-icons/fa6";
 import { IoTrashBin } from "react-icons/io5";
 
-import { DeleteConfirmModal } from "./DeleteConfirmModal";
 import { Type } from "../AddItem/AddItemModal";
+
+import { DeleteConfirmModal } from "./Modals/DeleteConfirmModal";
+import { InspectCardModal } from "./Modals/InspectCardModal";
+
+import { CardType } from "@/types";
 
 type Props = {
   id: string;
-  username: string;
-  password: string;
+  username?: string;
+  password?: string;
   url?: string;
+  card?: CardType;
   type: Type;
 };
 
@@ -29,11 +35,18 @@ export const VaultItemDropdown = ({
   password,
   url,
   type,
+  card,
 }: Props) => {
   const {
     isOpen: isOpenDeleteConfirmModal,
     onOpen: onOpenDeleteConfirmModal,
     onOpenChange: onOpenChangeDeleteConfirmModal,
+  } = useDisclosure();
+
+  const {
+    isOpen: isOpenInspectCardModal,
+    onOpen: onOpenInspectCardModal,
+    onOpenChange: onOpenChangeInspectCardModal,
   } = useDisclosure();
 
   const iconClasses = "text-xl text-default-500 pointer-events-none shrink-0";
@@ -57,7 +70,7 @@ export const VaultItemDropdown = ({
       key: "copyusername",
       label: "Copy Username",
       onClick: () => {
-        copyToClipboard(username);
+        copyToClipboard(username ?? "Failed To Copy Username");
         addToast({
           title: "Username Copied",
           description: "The username has been copied to your clipboard.",
@@ -69,7 +82,7 @@ export const VaultItemDropdown = ({
       key: "copypassword",
       label: "Copy Password",
       onClick: () => {
-        copyToClipboard(password);
+        copyToClipboard(password ?? "Failed To Copy Password");
         addToast({
           title: "Password Copied",
           description:
@@ -96,6 +109,26 @@ export const VaultItemDropdown = ({
     },
   ];
 
+  const cardDropdown = [
+    {
+      key: "showcard",
+      label: "Inspect Card",
+      onClick: () => onOpenInspectCardModal(),
+      startContent: <FaRegEye className={iconClasses} />,
+    },
+    {
+      key: "delete",
+      label: "Delete",
+      onClick: () => onOpenDeleteConfirmModal(),
+      startContent: <IoTrashBin className={iconClasses} />,
+    },
+  ];
+
+  let dropdownItems;
+
+  if (type === "password") dropdownItems = passwordDropdown;
+  if (type === "card") dropdownItems = cardDropdown;
+
   return (
     <>
       <Dropdown>
@@ -104,7 +137,7 @@ export const VaultItemDropdown = ({
             <SlOptionsVertical />
           </Button>
         </DropdownTrigger>
-        <DropdownMenu aria-label="Dynamic Actions" items={passwordDropdown}>
+        <DropdownMenu aria-label="Dynamic Actions" items={dropdownItems}>
           {(item) => (
             <DropdownItem
               {...item}
@@ -122,6 +155,13 @@ export const VaultItemDropdown = ({
         isOpen={isOpenDeleteConfirmModal}
         onOpenChange={onOpenChangeDeleteConfirmModal}
       />
+      {card && (
+        <InspectCardModal
+          card={card}
+          isOpen={isOpenInspectCardModal}
+          onOpenChange={onOpenChangeInspectCardModal}
+        />
+      )}
     </>
   );
 };

@@ -13,3 +13,10 @@ export type DecryptedItem = {
   item: DynamicField[];
   type: Type;
 };
+
+export type CardType = {
+  cardNumber: string;
+  cardHolderName: string;
+  cardExpiryDate: string;
+  cardCVV: string;
+};

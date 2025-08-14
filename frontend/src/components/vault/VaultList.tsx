@@ -1,4 +1,5 @@
 import { AddItemButton } from "../AddItem/AddItemButton";
+import { CreditCard } from "../Card/Card";
 
 import { VaultItem } from "./VaultItem";
 
