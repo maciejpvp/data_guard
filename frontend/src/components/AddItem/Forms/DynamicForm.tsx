@@ -3,7 +3,18 @@ import { Form } from "@heroui/form";
 import { Input, Textarea } from "@heroui/input";
 import { Button } from "@heroui/button";
 
-type FieldType = "text" | "number" | "email" | "password" | "url" | "textarea";
+import { Type } from "../AddItemModal";
+
+import { DecryptedItem } from "@/types";
+
+type FieldType =
+  | "text"
+  | "number"
+  | "email"
+  | "password"
+  | "url"
+  | "textarea"
+  | "month";
 
 export interface DynamicField {
   key: string;
@@ -18,11 +29,14 @@ export interface DynamicField {
   };
 }
 
+type OnSubmitProps = Omit<DecryptedItem, "id" | "userId">;
+
 interface DynamicFormProps {
   fields: DynamicField[];
-  onSubmit: (updatedFields: DynamicField[]) => void;
+  onSubmit: (updatedFields: OnSubmitProps) => void;
   submitButtonRef: React.MutableRefObject<HTMLButtonElement | null>;
   isDisabled: boolean;
+  type: Type;
 }
 
 export const DynamicForm: React.FC<DynamicFormProps> = ({
@@ -30,6 +44,7 @@ export const DynamicForm: React.FC<DynamicFormProps> = ({
   onSubmit,
   submitButtonRef,
   isDisabled,
+  type,
 }) => {
   const [values, setValues] = useState<Record<string, string>>(
     fields.reduce(
@@ -49,12 +64,17 @@ export const DynamicForm: React.FC<DynamicFormProps> = ({
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    const updatedFields = fields.map((field) => ({
+    const updatedFields: DynamicField[] = fields.map((field) => ({
       ...field,
       defaultValue: values[field.key],
     }));
 
-    onSubmit(updatedFields);
+    const item = {
+      type,
+      item: updatedFields,
+    };
+
+    onSubmit(item);
   };
 
   return (

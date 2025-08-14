@@ -2,6 +2,7 @@ import { VaultItemType } from "../../../shared/types";
 
 import { useCryptoStore } from "@/store/cryptoStore";
 import { DynamicField } from "@/components/AddItem/Forms/DynamicForm";
+import { DecryptedItem } from "@/types";
 
 const ENCRYPTION_ALGO = "AES-GCM";
 const KEY_LENGTH = 256;
@@ -102,11 +103,16 @@ export async function decryptData(
 export const decryptList = async (list: VaultItemType[]) => {
   const decryptedList = await Promise.all(
     list.map(async (item) => {
-      const decryptedItem: DynamicField[] = JSON.parse(
+      const decryptedItem: DecryptedItem = JSON.parse(
         await decryptData(item.secret),
       );
 
-      return { id: item.id, userId: item.userId, item: decryptedItem };
+      return {
+        id: item.id,
+        userId: item.userId,
+        item: decryptedItem.item,
+        type: decryptedItem.type,
+      };
     }),
   );
 

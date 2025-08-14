@@ -85,6 +85,7 @@ export const AddItemModal = ({ isOpen, onOpenChange }: Props) => {
                   fields={templates[type] ?? templates.password}
                   isDisabled={isPending}
                   submitButtonRef={submitButtonRef}
+                  type={type}
                   onSubmit={(e) => handleSubmit(JSON.stringify(e))}
                 />
               </ModalBody>
