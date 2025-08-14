@@ -124,6 +124,8 @@ export const MasterkeyPage = ({ testValue }: Props) => {
                 <Form className="flex flex-col gap-5" onSubmit={handleSubmit}>
                   <div className="flex flex-col w-full gap-1">
                     <Input
+                      autoFocus
+                      defaultValue="SuperHaslo123_!"
                       className={`transition-all duration-200 focus:scale-[1.02] ${
                         status === "error"
                           ? "border-red-500 border-2"

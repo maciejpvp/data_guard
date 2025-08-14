@@ -13,15 +13,23 @@ import { FaArrowUpRightFromSquare } from "react-icons/fa6";
 import { IoTrashBin } from "react-icons/io5";
 
 import { DeleteConfirmModal } from "./DeleteConfirmModal";
+import { Type } from "../AddItem/AddItemModal";
 
 type Props = {
   id: string;
   username: string;
   password: string;
   url?: string;
+  type: Type;
 };
 
-export const VaultItemDropdown = ({ id, username, password, url }: Props) => {
+export const VaultItemDropdown = ({
+  id,
+  username,
+  password,
+  url,
+  type,
+}: Props) => {
   const {
     isOpen: isOpenDeleteConfirmModal,
     onOpen: onOpenDeleteConfirmModal,
