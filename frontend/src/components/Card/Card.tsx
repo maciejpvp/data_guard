@@ -1,8 +1,8 @@
-"use client";
+import { useMemo, useState } from "react";
+
+import { MastercardIcon, MastercardIconWhite, PaypassIcon } from "./CardIcons";
 
 import { cx, sortCx } from "@/utils/cx";
-import { useMemo } from "react";
-import { MastercardIcon, MastercardIconWhite, PaypassIcon } from "./CardIcons";
 
 const styles = sortCx({
   // Normal
@@ -191,24 +191,69 @@ export const CreditCard = ({
 
   const privacyBlur = "blur-xs hover:blur-none transition-all duration-300";
 
+  const [tiltStyle, setTiltStyle] = useState({});
+
+  const updateTilt = (e: React.MouseEvent<HTMLDivElement>) => {
+    const { width, height, left, top } =
+      e.currentTarget.getBoundingClientRect();
+    const offsetX = e.clientX - left;
+    const offsetY = e.clientY - top;
+
+    const rotateX = (offsetY / height - 0.5) * -15;
+    const rotateY = (offsetX / width - 0.5) * 15;
+
+    setTiltStyle({
+      transform: `perspective(800px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`,
+      transition: "transform 150ms ease-out",
+    });
+  };
+
+  const resetTilt = () => {
+    setTiltStyle({
+      transform: `perspective(800px) rotateX(0deg) rotateY(0deg)`,
+      transition: "transform 300ms ease-in-out",
+    });
+  };
+
+  const [revealedCards, setRevealedCards] = useState<Set<string>>(new Set());
+
+  const toggleReveal = (id: string) => {
+    setRevealedCards((prev) => {
+      const newSet = new Set(prev);
+
+      if (newSet.has(id)) {
+        newSet.delete(id);
+      } else {
+        newSet.add(id);
+      }
+
+      return newSet;
+    });
+  };
+
+  const buttonClickStyle = "active:scale-90 transition-all duration-100";
+
   return (
     <div
+      className={cx("relative flex", [className])}
       style={{
         width: `${scaledWidth}px`,
         height: `${scaledHeight}px`,
+        ...tiltStyle,
       }}
-      className={cx("relative flex", className)}
+      onMouseLeave={resetTilt}
+      onMouseMove={updateTilt}
     >
       <div
+        className={cx(
+          "absolute top-0 left-0 flex origin-top-left flex-col justify-between overflow-hidden rounded-2xl p-4",
+          styles[type].root,
+        )}
         style={{
           transform: `scale(${scale})`,
           width: `${originalWidth}px`,
           height: `${originalHeight}px`,
         }}
-        className={cx(
-          "absolute top-0 left-0 flex origin-top-left flex-col justify-between overflow-hidden rounded-2xl p-4",
-          styles[type].root,
-        )}
       >
         {/* Horizontal strip */}
         {STRIP_TYPES.includes(type as (typeof STRIP_TYPES)[number]) && (
@@ -236,14 +281,17 @@ export const CreditCard = ({
               "text-md leading-[normal] font-semibold",
               styles[type].company,
             )}
-          >
-            {company}
-          </div>
+          />
 
           <div className="flex flex-row justify-center items-end gap-2">
             <PaypassIcon className={styles[type].paypassIcon} />
             <p className="text-lg leading-[normal] font-semibold tracking-[1px] tabular-nums">
-              <span className={privacyBlur}>{cvv ? cvv : ""}</span>
+              <button
+                className={`${revealedCards.has("cvv") ? "" : privacyBlur} ${buttonClickStyle}`}
+                onClick={() => toggleReveal("cvv")}
+              >
+                {cvv ? cvv : ""}
+              </button>
             </p>
           </div>
         </div>
@@ -251,34 +299,40 @@ export const CreditCard = ({
         <div className="relative flex items-end justify-between gap-3">
           <div className="flex min-w-0 flex-col gap-2">
             <div className="flex items-end gap-1">
-              <p
+              <button
                 style={{
                   wordBreak: "break-word",
                 }}
                 className={cx(
                   "text-xs leading-snug font-semibold tracking-[0.6px] uppercase",
                   styles[type].footerText,
-                  privacyBlur,
+                  revealedCards.has("cardHolder") ? "" : privacyBlur,
+                  buttonClickStyle,
                 )}
+                onClick={() => toggleReveal("cardHolder")}
               >
                 {cardHolder}
-              </p>
-              <p
+              </button>
+              <button
                 className={cx(
                   "ml-auto text-right text-xs leading-[normal] font-semibold tracking-[0.6px] tabular-nums",
                   styles[type].footerText,
-                  privacyBlur,
+                  revealedCards.has("cardExpiration") ? "" : privacyBlur,
+                  buttonClickStyle,
                 )}
+                onClick={() => toggleReveal("cardExpiration")}
               >
                 {cardExpiration}
-              </p>
+              </button>
             </div>
-            <div
+            <button
               className={cx(
                 "text-md leading-[normal] font-semibold tracking-[1px] tabular-nums",
                 styles[type].footerText,
-                privacyBlur,
+                revealedCards.has("cardNumber") ? "" : privacyBlur,
+                buttonClickStyle,
               )}
+              onClick={() => toggleReveal("cardNumber")}
             >
               {cardNumber}
 
@@ -286,7 +340,7 @@ export const CreditCard = ({
               <span className="pointer-events-none invisible inline-block w-0 max-w-0 opacity-0">
                 1
               </span>
-            </div>
+            </button>
           </div>
 
           <div
