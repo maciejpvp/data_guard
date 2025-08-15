@@ -18,15 +18,16 @@ import { Type } from "../AddItem/AddItemModal";
 import { DeleteConfirmModal } from "./Modals/DeleteConfirmModal";
 import { InspectCardModal } from "./Modals/InspectCardModal";
 
-import { CardType } from "@/types";
+import { CardType, SSHKeyType } from "@/types";
 
 type Props = {
+  type: Type;
   id: string;
   username?: string;
   password?: string;
   url?: string;
   card?: CardType;
-  type: Type;
+  sshkey?: SSHKeyType;
 };
 
 export const VaultItemDropdown = ({
@@ -36,6 +37,7 @@ export const VaultItemDropdown = ({
   url,
   type,
   card,
+  sshkey,
 }: Props) => {
   const {
     isOpen: isOpenDeleteConfirmModal,
@@ -124,10 +126,56 @@ export const VaultItemDropdown = ({
     },
   ];
 
+  const sshkeyDropdown = [
+    {
+      key: "copypublickey",
+      label: "Copy Public Key",
+      onClick: () => {
+        copyToClipboard(sshkey?.publicKey ?? "Failed To Copy Public Key");
+        addToast({
+          title: "Public Key Copied",
+          description: "The public key has been copied to your clipboard.",
+        });
+      },
+      startContent: <FaRegCopy className={iconClasses} />,
+    },
+    {
+      key: "copyprivatekey",
+      label: "Copy Private Key",
+      onClick: () => {
+        copyToClipboard(sshkey?.privateKey ?? "Failed To Copy Private Key");
+        addToast({
+          title: "Private Key Copied",
+          description: "The private key has been copied to your clipboard.",
+        });
+      },
+      startContent: <FaRegCopy className={iconClasses} />,
+    },
+    {
+      key: "copypassphrase",
+      label: "Copy Passphrase",
+      onClick: () => {
+        copyToClipboard(sshkey?.passphrase ?? "Failed To Copy Passphrase");
+        addToast({
+          title: "Passphrase Copied",
+          description: "The passphrase has been copied to your clipboard.",
+        });
+      },
+      startContent: <FaRegCopy className={iconClasses} />,
+    },
+    {
+      key: "delete",
+      label: "Delete",
+      onClick: () => onOpenDeleteConfirmModal(),
+      startContent: <IoTrashBin className={iconClasses} />,
+    },
+  ];
+
   let dropdownItems;
 
   if (type === "password") dropdownItems = passwordDropdown;
   if (type === "card") dropdownItems = cardDropdown;
+  if (type === "sshkey") dropdownItems = sshkeyDropdown;
 
   return (
     <>

@@ -20,3 +20,9 @@ export type CardType = {
   cardExpiryDate: string;
   cardCVV: string;
 };
+
+export type SSHKeyType = {
+  publicKey: string;
+  privateKey: string;
+  passphrase: string;
+};

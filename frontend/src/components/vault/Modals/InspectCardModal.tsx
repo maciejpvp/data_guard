@@ -44,7 +44,7 @@ export const InspectCardModal = ({ isOpen, onOpenChange, card }: Props) => {
                 </p>
               </ModalBody>
               <ModalFooter className="justify-center">
-                <Button onPress={onClose} size="sm">
+                <Button size="sm" onPress={onClose}>
                   Close
                 </Button>
               </ModalFooter>

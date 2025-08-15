@@ -50,7 +50,6 @@ export const VaultItem = ({ item }: Props) => {
   }
 
   if (type === "card") {
-    console.log(item.item);
     const cardNumber = getField("cardNumber")?.defaultValue ?? "";
     const cardHolderName = getField("cardholderName")?.defaultValue ?? "";
     const cardExpiryDate = getField("expiryDate")?.defaultValue ?? "";
@@ -78,6 +77,34 @@ export const VaultItem = ({ item }: Props) => {
               </div>
             </div>
             <VaultItemDropdown card={card} id={item.id} type={type} />
+          </CardBody>
+        </Card>
+      </li>
+    );
+  }
+  if (type === "sshkey") {
+    const privateKey = getField("privateKey")?.defaultValue ?? "";
+    const publicKey = getField("publicKey")?.defaultValue ?? "";
+    const passphrase = getField("passphrase")?.defaultValue ?? "";
+
+    const sshKeyObject = {
+      passphrase,
+      privateKey,
+      publicKey,
+    };
+
+    return (
+      <li>
+        <Card>
+          <CardBody className="ml-3 flex flex-row items-center justify-between gap-6">
+            <div className="flex flex-row items-center gap-6">
+              <GetIcon type={type} />
+              <div>
+                <h1 className="text-lg text-blue-400 font-semibold">{name}</h1>
+                {/* <p className="text-default-600"></p> */}
+              </div>
+            </div>
+            <VaultItemDropdown id={item.id} sshkey={sshKeyObject} type={type} />
           </CardBody>
         </Card>
       </li>
