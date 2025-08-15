@@ -32,3 +32,9 @@ export type SSHKeyType = {
   privateKey: string;
   passphrase: string;
 };
+
+export type ApiKeyType = {
+  service: string;
+  apikey: string;
+  url?: string;
+};

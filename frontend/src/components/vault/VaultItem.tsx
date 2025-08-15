@@ -110,4 +110,32 @@ export const VaultItem = ({ item }: Props) => {
       </li>
     );
   }
+  if (type === "apikey") {
+    const service = getField("service")?.defaultValue ?? "";
+    const apikey = getField("apiKey")?.defaultValue ?? "";
+    const url = getField("url")?.defaultValue ?? "";
+
+    const apiKeyObject = {
+      service,
+      apikey,
+      url,
+    };
+
+    return (
+      <li>
+        <Card>
+          <CardBody className="ml-3 flex flex-row items-center justify-between gap-6">
+            <div className="flex flex-row items-center gap-6">
+              <GetIcon type={type} />
+              <div>
+                <h1 className="text-lg text-blue-400 font-semibold">{name}</h1>
+                <p className="text-default-600">{apiKeyObject.service}</p>
+              </div>
+            </div>
+            <VaultItemDropdown apikey={apiKeyObject} id={item.id} type={type} />
+          </CardBody>
+        </Card>
+      </li>
+    );
+  }
 };

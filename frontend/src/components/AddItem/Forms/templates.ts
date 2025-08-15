@@ -50,7 +50,7 @@ const card: DynamicField[] = createTemplate([
 ]);
 
 const apikey: DynamicField[] = createTemplate([
-  { key: "service", label: "Service Name", type: "text", isRequired: true },
+  { key: "service", label: "Service Name", type: "text" },
   { key: "apiKey", label: "API Key", type: "password", isRequired: true },
   { key: "url", label: "API URL", type: "url" },
   { key: "note", label: "Note", type: "textarea" },

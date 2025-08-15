@@ -15,7 +15,7 @@ import { IoTrashBin } from "react-icons/io5";
 import { DeleteConfirmModal } from "./Modals/DeleteConfirmModal";
 import { InspectCardModal } from "./Modals/InspectCardModal";
 
-import { CardType, LoginType, SSHKeyType } from "@/types";
+import { ApiKeyType, CardType, LoginType, SSHKeyType } from "@/types";
 
 type Props =
   | {
@@ -32,6 +32,11 @@ type Props =
       type: "sshkey";
       id: string;
       sshkey: SSHKeyType;
+    }
+  | {
+      type: "apikey";
+      id: string;
+      apikey: ApiKeyType;
     };
 
 export const VaultItemDropdown = (props: Props) => {
@@ -168,6 +173,31 @@ export const VaultItemDropdown = (props: Props) => {
           addToast({
             title: "Passphrase Copied",
             description: "The passphrase has been copied to your clipboard.",
+          });
+        },
+        startContent: <FaRegCopy className={iconClasses} />,
+      },
+      {
+        key: "delete",
+        label: "Delete",
+        onClick: () => onOpenDeleteConfirmModal(),
+        startContent: <IoTrashBin className={iconClasses} />,
+      },
+    ];
+  }
+
+  if (type === "apikey") {
+    const apikey = props.apikey;
+
+    dropdownItems = [
+      {
+        key: "Copy API Key",
+        label: "Copy API Key",
+        onClick: () => {
+          copyToClipboard(apikey.apikey);
+          addToast({
+            title: "API Key Copied",
+            description: "The api key has been copied to your clipboard.",
           });
         },
         startContent: <FaRegCopy className={iconClasses} />,
