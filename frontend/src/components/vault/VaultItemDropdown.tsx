@@ -5,7 +5,6 @@ import {
   DropdownMenu,
   DropdownItem,
 } from "@heroui/dropdown";
-
 import { useDisclosure } from "@heroui/use-disclosure";
 import { addToast } from "@heroui/toast";
 import { SlOptionsVertical } from "react-icons/sl";
@@ -13,32 +12,31 @@ import { FaRegCopy, FaRegEye } from "react-icons/fa";
 import { FaArrowUpRightFromSquare } from "react-icons/fa6";
 import { IoTrashBin } from "react-icons/io5";
 
-import { Type } from "../AddItem/AddItemModal";
-
 import { DeleteConfirmModal } from "./Modals/DeleteConfirmModal";
 import { InspectCardModal } from "./Modals/InspectCardModal";
 
-import { CardType, SSHKeyType } from "@/types";
+import { CardType, LoginType, SSHKeyType } from "@/types";
 
-type Props = {
-  type: Type;
-  id: string;
-  username?: string;
-  password?: string;
-  url?: string;
-  card?: CardType;
-  sshkey?: SSHKeyType;
-};
+type Props =
+  | {
+      type: "password";
+      id: string;
+      login: LoginType;
+    }
+  | {
+      type: "card";
+      id: string;
+      card: CardType;
+    }
+  | {
+      type: "sshkey";
+      id: string;
+      sshkey: SSHKeyType;
+    };
 
-export const VaultItemDropdown = ({
-  id,
-  username,
-  password,
-  url,
-  type,
-  card,
-  sshkey,
-}: Props) => {
+export const VaultItemDropdown = (props: Props) => {
+  const { id, type } = props;
+
   const {
     isOpen: isOpenDeleteConfirmModal,
     onOpen: onOpenDeleteConfirmModal,
@@ -67,115 +65,121 @@ export const VaultItemDropdown = ({
     document.body.removeChild(link);
   };
 
-  const passwordDropdown = [
-    {
-      key: "copyusername",
-      label: "Copy Username",
-      onClick: () => {
-        copyToClipboard(username ?? "Failed To Copy Username");
-        addToast({
-          title: "Username Copied",
-          description: "The username has been copied to your clipboard.",
-        });
-      },
-      startContent: <FaRegCopy className={iconClasses} />,
-    },
-    {
-      key: "copypassword",
-      label: "Copy Password",
-      onClick: () => {
-        copyToClipboard(password ?? "Failed To Copy Password");
-        addToast({
-          title: "Password Copied",
-          description:
-            "The password has been securely copied to your clipboard.",
-        });
-      },
-      startContent: <FaRegCopy className={iconClasses} />,
-    },
-    ...(url
-      ? [
-          {
-            key: "visit",
-            label: "Visit",
-            onClick: () => openInNewTab(url),
-            startContent: <FaArrowUpRightFromSquare className={iconClasses} />,
-          },
-        ]
-      : []),
-    {
-      key: "delete",
-      label: "Delete",
-      onClick: () => onOpenDeleteConfirmModal(),
-      startContent: <IoTrashBin className={iconClasses} />,
-    },
-  ];
-
-  const cardDropdown = [
-    {
-      key: "showcard",
-      label: "Inspect Card",
-      onClick: () => onOpenInspectCardModal(),
-      startContent: <FaRegEye className={iconClasses} />,
-    },
-    {
-      key: "delete",
-      label: "Delete",
-      onClick: () => onOpenDeleteConfirmModal(),
-      startContent: <IoTrashBin className={iconClasses} />,
-    },
-  ];
-
-  const sshkeyDropdown = [
-    {
-      key: "copypublickey",
-      label: "Copy Public Key",
-      onClick: () => {
-        copyToClipboard(sshkey?.publicKey ?? "Failed To Copy Public Key");
-        addToast({
-          title: "Public Key Copied",
-          description: "The public key has been copied to your clipboard.",
-        });
-      },
-      startContent: <FaRegCopy className={iconClasses} />,
-    },
-    {
-      key: "copyprivatekey",
-      label: "Copy Private Key",
-      onClick: () => {
-        copyToClipboard(sshkey?.privateKey ?? "Failed To Copy Private Key");
-        addToast({
-          title: "Private Key Copied",
-          description: "The private key has been copied to your clipboard.",
-        });
-      },
-      startContent: <FaRegCopy className={iconClasses} />,
-    },
-    {
-      key: "copypassphrase",
-      label: "Copy Passphrase",
-      onClick: () => {
-        copyToClipboard(sshkey?.passphrase ?? "Failed To Copy Passphrase");
-        addToast({
-          title: "Passphrase Copied",
-          description: "The passphrase has been copied to your clipboard.",
-        });
-      },
-      startContent: <FaRegCopy className={iconClasses} />,
-    },
-    {
-      key: "delete",
-      label: "Delete",
-      onClick: () => onOpenDeleteConfirmModal(),
-      startContent: <IoTrashBin className={iconClasses} />,
-    },
-  ];
-
   let dropdownItems;
 
-  if (type === "password") dropdownItems = passwordDropdown;
-  if (type === "card") dropdownItems = cardDropdown;
-  if (type === "sshkey") dropdownItems = sshkeyDropdown;
+  if (type === "password") {
+    const login = props.login;
+
+    dropdownItems = [
+      {
+        key: "copyusername",
+        label: "Copy Username",
+        onClick: () => {
+          copyToClipboard(login.username);
+          addToast({
+            title: "Username Copied",
+            description: "The username has been copied to your clipboard.",
+          });
+        },
+        startContent: <FaRegCopy className={iconClasses} />,
+      },
+      {
+        key: "copypassword",
+        label: "Copy Password",
+        onClick: () => {
+          copyToClipboard(login.password);
+          addToast({
+            title: "Password Copied",
+            description:
+              "The password has been securely copied to your clipboard.",
+          });
+        },
+        startContent: <FaRegCopy className={iconClasses} />,
+      },
+      ...(login?.url
+        ? [
+            {
+              key: "visit",
+              label: "Visit",
+              onClick: () => openInNewTab(login?.url as string),
+              startContent: (
+                <FaArrowUpRightFromSquare className={iconClasses} />
+              ),
+            },
+          ]
+        : []),
+      {
+        key: "delete",
+        label: "Delete",
+        onClick: () => onOpenDeleteConfirmModal(),
+        startContent: <IoTrashBin className={iconClasses} />,
+      },
+    ];
+  }
+  if (type === "card") {
+    dropdownItems = [
+      {
+        key: "showcard",
+        label: "Inspect Card",
+        onClick: () => onOpenInspectCardModal(),
+        startContent: <FaRegEye className={iconClasses} />,
+      },
+      {
+        key: "delete",
+        label: "Delete",
+        onClick: () => onOpenDeleteConfirmModal(),
+        startContent: <IoTrashBin className={iconClasses} />,
+      },
+    ];
+  }
+  if (type === "sshkey") {
+    const sshkey = props.sshkey;
+
+    dropdownItems = [
+      {
+        key: "copypublickey",
+        label: "Copy Public Key",
+        onClick: () => {
+          copyToClipboard(sshkey.publicKey);
+          addToast({
+            title: "Public Key Copied",
+            description: "The public key has been copied to your clipboard.",
+          });
+        },
+        startContent: <FaRegCopy className={iconClasses} />,
+      },
+      {
+        key: "copyprivatekey",
+        label: "Copy Private Key",
+        onClick: () => {
+          copyToClipboard(sshkey.privateKey);
+          addToast({
+            title: "Private Key Copied",
+            description: "The private key has been copied to your clipboard.",
+          });
+        },
+        startContent: <FaRegCopy className={iconClasses} />,
+      },
+      {
+        key: "copypassphrase",
+        label: "Copy Passphrase",
+        onClick: () => {
+          copyToClipboard(sshkey.passphrase);
+          addToast({
+            title: "Passphrase Copied",
+            description: "The passphrase has been copied to your clipboard.",
+          });
+        },
+        startContent: <FaRegCopy className={iconClasses} />,
+      },
+      {
+        key: "delete",
+        label: "Delete",
+        onClick: () => onOpenDeleteConfirmModal(),
+        startContent: <IoTrashBin className={iconClasses} />,
+      },
+    ];
+  }
 
   return (
     <>
@@ -203,9 +207,9 @@ export const VaultItemDropdown = ({
         isOpen={isOpenDeleteConfirmModal}
         onOpenChange={onOpenChangeDeleteConfirmModal}
       />
-      {card && (
+      {type === "card" && (
         <InspectCardModal
-          card={card}
+          card={props.card}
           isOpen={isOpenInspectCardModal}
           onOpenChange={onOpenChangeInspectCardModal}
         />

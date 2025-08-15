@@ -18,9 +18,15 @@ export const VaultItem = ({ item }: Props) => {
   const name = getField("name")?.defaultValue || "(No name)";
 
   if (type === "password") {
-    const username = getField("username")?.defaultValue;
-    const password = getField("password")?.defaultValue;
-    const url = getField("url")?.defaultValue;
+    const username = getField("username")?.defaultValue ?? "";
+    const password = getField("password")?.defaultValue ?? "";
+    const url = getField("url")?.defaultValue ?? "";
+
+    const loginObject = {
+      username,
+      password,
+      url,
+    };
 
     //Password Item
     return (
@@ -36,13 +42,7 @@ export const VaultItem = ({ item }: Props) => {
                 <p className="text-default-600">{username}</p>
               </div>
             </div>
-            <VaultItemDropdown
-              id={item.id}
-              password={password ?? ""}
-              type={type}
-              url={url}
-              username={username ?? ""}
-            />
+            <VaultItemDropdown id={item.id} login={loginObject} type={type} />
           </CardBody>
         </Card>
       </li>

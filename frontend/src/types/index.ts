@@ -14,6 +14,12 @@ export type DecryptedItem = {
   type: Type;
 };
 
+export type LoginType = {
+  username: string;
+  password: string;
+  url?: string;
+};
+
 export type CardType = {
   cardNumber: string;
   cardHolderName: string;
