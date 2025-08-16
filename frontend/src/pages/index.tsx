@@ -13,7 +13,9 @@ import { DecryptedItem } from "@/types";
 
 export const IndexPage = () => {
   const { data, isLoading } = useGetList();
-  const [doesVaultExists, setDoesVaultExists] = useState<string | false>(false);
+  const [doesVaultExists, setDoesVaultExists] = useState<string | false>(
+    "Default Value",
+  );
 
   const list = data ?? [];
 
@@ -21,7 +23,12 @@ export const IndexPage = () => {
   const key = useCryptoStore((store) => store.key);
 
   useEffect(() => {
-    if (list.length === 0) return;
+    if (list.length === 0 && !isLoading) {
+      console.log(isLoading);
+      setDoesVaultExists(false);
+
+      return;
+    }
     let encryptedList = [];
 
     for (const item of list) {
@@ -42,6 +49,8 @@ export const IndexPage = () => {
   }, [list, key, doesVaultExists]);
 
   if (isLoading) return <LoadingPage />;
+
+  console.log(doesVaultExists);
 
   if (!doesVaultExists) return <CreateVaultPage />;
 

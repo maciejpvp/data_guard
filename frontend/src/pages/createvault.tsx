@@ -7,8 +7,8 @@ import { Card, CardBody, CardHeader } from "@heroui/card";
 import AuthLayout from "@/layouts/auth";
 import { MasterKeyRequirements } from "@/components/CreateVault/MasterKeyRequirements";
 import { useCryptoStore } from "@/store/cryptoStore";
-import { vaultApi } from "@/api/vault";
 import { encryptData, getKeyFromMaster } from "@/utils/crypto";
+import { useAddItem } from "@/hooks/mutations/useAddItem";
 
 const requirements = [
   {
@@ -46,6 +46,8 @@ export const CreateVaultPage = () => {
 
   const storeMasterKey = useCryptoStore((store) => store.setKey);
 
+  const { mutate: addItem, isPending } = useAddItem();
+
   useEffect(() => {
     setRequirementsStatus(requirements.map((r) => r.test(masterKey)));
     setMatch(confirmKey === masterKey);
@@ -65,7 +67,7 @@ export const CreateVaultPage = () => {
 
     const testValue = await encryptData("Valid", key);
 
-    vaultApi.addItem(`#Vault-${testValue}`);
+    addItem(`#Vault-${testValue}`);
 
     storeMasterKey(masterKey);
   };
@@ -84,6 +86,7 @@ export const CreateVaultPage = () => {
           <Form className="flex flex-col gap-5" onSubmit={handleSubmit}>
             <div className="flex flex-col w-full gap-1">
               <Input
+                isDisabled={isPending}
                 isInvalid={
                   !masterKeyFocused && !requirementsStatus.every(Boolean)
                 }
@@ -103,6 +106,7 @@ export const CreateVaultPage = () => {
               />
 
               <Input
+                isDisabled={isPending}
                 isInvalid={!match}
                 label="Confirm Master Key"
                 placeholder="Confirm master key"
@@ -114,7 +118,7 @@ export const CreateVaultPage = () => {
             <Button
               className="w-full"
               color="primary"
-              isDisabled={!allPassed}
+              isDisabled={!allPassed || isPending}
               type="submit"
             >
               Create
