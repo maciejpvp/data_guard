@@ -1,5 +1,6 @@
+import { useSearchParams } from "react-router-dom";
+
 import { AddItemButton } from "../AddItem/AddItemButton";
-import { CreditCard } from "../Card/Card";
 
 import { VaultItem } from "./VaultItem";
 
@@ -10,11 +11,19 @@ type Props = {
 };
 
 export const VaultList = ({ list }: Props) => {
+  const [searchParams] = useSearchParams();
+
+  const filter = searchParams.get("filter");
+
+  const filteredList = filter
+    ? list.filter((item) => item.type === filter)
+    : list;
+
   return (
     <div className="flex flex-col gap-4">
       <AddItemButton />
       <ul className="flex flex-col gap-4">
-        {list.map((item, index) => (
+        {filteredList.map((item, index) => (
           <VaultItem key={index} item={item} />
         ))}
       </ul>

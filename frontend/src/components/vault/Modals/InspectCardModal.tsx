@@ -1,5 +1,4 @@
-import { CreditCard } from "@/components/Card/Card";
-import { CardType } from "@/types";
+import { useRef } from "react";
 import { Button } from "@heroui/button";
 import {
   Modal,
@@ -8,7 +7,9 @@ import {
   ModalBody,
   ModalFooter,
 } from "@heroui/modal";
-import { useRef } from "react";
+
+import { CreditCard } from "@/components/Card/Card";
+import { CardType } from "@/types";
 
 type Props = {
   card: CardType;
@@ -18,7 +19,6 @@ type Props = {
 
 export const InspectCardModal = ({ isOpen, onOpenChange, card }: Props) => {
   const onCloseRef = useRef<() => void | null>(null!);
-  console.log(card);
 
   return (
     <Modal isOpen={isOpen} onOpenChange={onOpenChange}>

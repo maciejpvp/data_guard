@@ -1,11 +1,11 @@
 import { Card, CardBody } from "@heroui/card";
+import { useDisclosure } from "@heroui/use-disclosure";
 
+import { ViewEditModal } from "./Modals/ViewEditModal";
 import { VaultItemDropdown } from "./VaultItemDropdown";
 import { GetIcon } from "./GetIcon";
 
 import { CardType, DecryptedItem } from "@/types";
-import { useDisclosure } from "@heroui/use-disclosure";
-import { ViewEditModal } from "./Modals/ViewEditModal";
 
 type Props = {
   item: DecryptedItem;
