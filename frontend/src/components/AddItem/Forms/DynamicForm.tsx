@@ -6,6 +6,7 @@ import { Button } from "@heroui/button";
 import { Type } from "../AddItemModal";
 
 import { DecryptedItem } from "@/types";
+import { EyeFilledIcon, EyeSlashFilledIcon } from "@/components/icons";
 
 type FieldType =
   | "text"
@@ -57,6 +58,8 @@ export const DynamicForm: React.FC<DynamicFormProps> = ({
     ),
   );
 
+  const [showValue, setShowValue] = useState<Set<string>>(new Set());
+
   const handleChange = (key: string, value: string) => {
     setValues((prev) => ({ ...prev, [key]: value }));
   };
@@ -91,15 +94,55 @@ export const DynamicForm: React.FC<DynamicFormProps> = ({
         };
 
         if (field.type === "textarea") {
-          return <Textarea {...commonProps} key={field.key} />;
+          return (
+            <>
+              <Textarea
+                {...commonProps}
+                key={field.key}
+                readOnly={isDisabled}
+              />
+            </>
+          );
         }
 
         return (
           <Input
             {...commonProps}
             key={field.key}
-            isDisabled={isDisabled}
-            type={field.type}
+            endContent={
+              field.type === "password" ? (
+                <button
+                  aria-label="toggle password visibility"
+                  className="focus:outline-solid outline-transparent"
+                  type="button"
+                  onClick={() => {
+                    setShowValue((prev) => {
+                      const newSet = new Set(prev);
+
+                      if (newSet.has(field.key)) {
+                        newSet.delete(field.key);
+                      } else {
+                        newSet.add(field.key);
+                      }
+
+                      return newSet;
+                    });
+                  }}
+                >
+                  {showValue.has(field.key) ? (
+                    <EyeSlashFilledIcon className="text-2xl text-default-400 pointer-events-none" />
+                  ) : (
+                    <EyeFilledIcon className="text-2xl text-default-400 pointer-events-none" />
+                  )}
+                </button>
+              ) : null
+            }
+            readOnly={isDisabled}
+            type={
+              field.type === "password" && !showValue.has(field.key)
+                ? "password"
+                : "text"
+            }
           />
         );
       })}

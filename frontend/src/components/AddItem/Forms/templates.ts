@@ -37,7 +37,12 @@ const sshkey: DynamicField[] = createTemplate([
 ]);
 
 const card: DynamicField[] = createTemplate([
-  { key: "cardNumber", label: "Card Number", type: "text", isRequired: true },
+  {
+    key: "cardNumber",
+    label: "Card Number",
+    type: "password",
+    isRequired: true,
+  },
   {
     key: "cardholderName",
     label: "Cardholder Name",

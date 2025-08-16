@@ -4,13 +4,23 @@ import { VaultItemDropdown } from "./VaultItemDropdown";
 import { GetIcon } from "./GetIcon";
 
 import { CardType, DecryptedItem } from "@/types";
+import { useDisclosure } from "@heroui/use-disclosure";
+import { ViewEditModal } from "./Modals/ViewEditModal";
 
 type Props = {
   item: DecryptedItem;
 };
 
 export const VaultItem = ({ item }: Props) => {
+  const {
+    isOpen: isOpenViewEditModal,
+    onOpen: onOpenViewEditModal,
+    onOpenChange: onOpenChangeViewEditModal,
+  } = useDisclosure();
+
   const getField = (key: string) => item.item.find((f) => f.key === key);
+
+  const buttonStyle = "text-lg text-blue-400 font-semibold cursor-pointer";
 
   // const note = getField("note")?.defaultValue;
 
@@ -36,15 +46,20 @@ export const VaultItem = ({ item }: Props) => {
             <div className="flex flex-row items-center gap-6">
               <GetIcon type={item.type} url={url} />
               <div>
-                <h1 className="text-lg text-blue-400 font-semibold">
+                <button className={buttonStyle} onClick={onOpenViewEditModal}>
                   {url ? (url.split("://").at(1) ?? url) : name}
-                </h1>
+                </button>
                 <p className="text-default-600">{username}</p>
               </div>
             </div>
             <VaultItemDropdown id={item.id} login={loginObject} type={type} />
           </CardBody>
         </Card>
+        <ViewEditModal
+          isOpen={isOpenViewEditModal}
+          item={item}
+          onOpenChange={onOpenChangeViewEditModal}
+        />
       </li>
     );
   }
@@ -70,7 +85,12 @@ export const VaultItem = ({ item }: Props) => {
             <div className="flex flex-row items-center gap-6">
               <GetIcon type={type} />
               <div>
-                <h1 className="text-lg text-blue-400 font-semibold">{name}</h1>
+                <button
+                  className={buttonStyle}
+                  onClick={onOpenChangeViewEditModal}
+                >
+                  {name}
+                </button>
                 <p className="text-default-600">
                   Ends with {cardNumber?.slice(-4)}
                 </p>
@@ -79,6 +99,11 @@ export const VaultItem = ({ item }: Props) => {
             <VaultItemDropdown card={card} id={item.id} type={type} />
           </CardBody>
         </Card>
+        <ViewEditModal
+          isOpen={isOpenViewEditModal}
+          item={item}
+          onOpenChange={onOpenChangeViewEditModal}
+        />
       </li>
     );
   }
@@ -100,13 +125,23 @@ export const VaultItem = ({ item }: Props) => {
             <div className="flex flex-row items-center gap-6">
               <GetIcon type={type} />
               <div>
-                <h1 className="text-lg text-blue-400 font-semibold">{name}</h1>
+                <button
+                  className={buttonStyle}
+                  onClick={onOpenChangeViewEditModal}
+                >
+                  {name}
+                </button>
                 {/* <p className="text-default-600"></p> */}
               </div>
             </div>
             <VaultItemDropdown id={item.id} sshkey={sshKeyObject} type={type} />
           </CardBody>
         </Card>
+        <ViewEditModal
+          isOpen={isOpenViewEditModal}
+          item={item}
+          onOpenChange={onOpenChangeViewEditModal}
+        />
       </li>
     );
   }
@@ -128,13 +163,23 @@ export const VaultItem = ({ item }: Props) => {
             <div className="flex flex-row items-center gap-6">
               <GetIcon type={type} />
               <div>
-                <h1 className="text-lg text-blue-400 font-semibold">{name}</h1>
+                <button
+                  className={buttonStyle}
+                  onClick={onOpenChangeViewEditModal}
+                >
+                  {name}
+                </button>
                 <p className="text-default-600">{apiKeyObject.service}</p>
               </div>
             </div>
             <VaultItemDropdown apikey={apiKeyObject} id={item.id} type={type} />
           </CardBody>
         </Card>
+        <ViewEditModal
+          isOpen={isOpenViewEditModal}
+          item={item}
+          onOpenChange={onOpenChangeViewEditModal}
+        />
       </li>
     );
   }
