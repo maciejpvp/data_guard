@@ -7,12 +7,12 @@ import {
 } from "@heroui/modal";
 import { Button } from "@heroui/button";
 import { Select, SelectItem } from "@heroui/select";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import { encryptData } from "@/utils/crypto";
-import { useAddItem } from "@/hooks/mutations/useAddItem";
 import { DynamicForm } from "@/components/AddItem/Forms/DynamicForm";
 import { DecryptedItem } from "@/types";
+import { useEditItem } from "@/hooks/mutations/useEditItem";
 
 export const types = [
   { key: "password", label: "Password" },
@@ -35,7 +35,7 @@ export const ViewEditModal = ({ isOpen, onOpenChange, item }: Props) => {
   const [editMode, setEditMode] = useState<boolean>(false);
   const onCloseRef = useRef<() => void | null>(null!);
   const submitButtonRef = useRef<HTMLButtonElement | null>(null);
-  const { mutate: submitItem, isPending } = useAddItem();
+  const { mutate: editItem, isPending } = useEditItem();
 
   const isDisabled = !editMode || isPending;
 
@@ -51,15 +51,32 @@ export const ViewEditModal = ({ isOpen, onOpenChange, item }: Props) => {
     submitButtonRef.current.click();
   };
 
+  const handleClose = () => {
+    setEditMode(false);
+    onCloseRef.current?.();
+  };
+
   const handleSubmit = async (form: string) => {
     const encrypted = await encryptData(form);
 
-    submitItem(encrypted, {
-      onSettled: () => {
-        onCloseRef?.current?.();
+    editItem(
+      {
+        id: item.id,
+        secret: encrypted,
       },
-    });
+      {
+        onSettled: () => {
+          onCloseRef.current?.();
+        },
+      },
+    );
   };
+
+  useEffect(() => {
+    if (!isOpen) {
+      setEditMode(false);
+    }
+  }, [onOpenChange]);
 
   return (
     <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
@@ -96,20 +113,19 @@ export const ViewEditModal = ({ isOpen, onOpenChange, item }: Props) => {
                 <Button
                   color={editMode ? "default" : "primary"}
                   isDisabled={isPending}
-                  isLoading={isPending}
                   variant="solid"
                   onPress={() => setEditMode((prev) => !prev)}
                 >
                   {editMode ? "Cancel" : "Edit"}
                 </Button>
                 <Button
-                  color="default"
+                  color={editMode ? "primary" : "default"}
                   isDisabled={isPending}
                   isLoading={isPending}
-                  variant="light"
-                  onPress={handleCreateButton}
+                  variant={editMode ? "solid" : "light"}
+                  onPress={editMode ? handleCreateButton : handleClose}
                 >
-                  Close
+                  {editMode ? "Submit" : "Close"}
                 </Button>
               </ModalFooter>
             </>

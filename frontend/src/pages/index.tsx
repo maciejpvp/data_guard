@@ -24,7 +24,6 @@ export const IndexPage = () => {
 
   useEffect(() => {
     if (list.length === 0 && !isLoading) {
-      console.log(isLoading);
       setDoesVaultExists(false);
 
       return;

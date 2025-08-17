@@ -61,6 +61,16 @@ export const configureApiGateway = (
     authorizer,
   });
 
+  new ApiRoute(stack, `EditItemRoute-${stage}`, {
+    api,
+    type: "PATCH",
+    route: "vault/editItem/{id}",
+    lambda: lambdas.editItem.lambdaFunction,
+    name: `EditItem-${stage}`,
+    secured: true,
+    authorizer,
+  });
+
   new cdk.CfnOutput(stack, "ApiUrl", {
     value: api.url,
   });

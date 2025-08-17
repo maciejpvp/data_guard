@@ -1,6 +1,11 @@
 import { VaultItemType } from "../../../../shared/types";
 import { docClient } from "../utils/dynamoClient";
-import { DeleteCommand, QueryCommand } from "@aws-sdk/lib-dynamodb";
+import {
+  DeleteCommand,
+  QueryCommand,
+  PutCommand,
+  UpdateCommand,
+} from "@aws-sdk/lib-dynamodb";
 
 type GetItemsByUserIdProps = {
   userId: string;
@@ -46,4 +51,56 @@ export const deleteItemById = async ({
   await docClient.send(command);
 };
 
-export const insertItem = async () => {};
+type InsertItemProps = {
+  item: VaultItemType;
+  tableName: string;
+};
+
+export const insertItem = async ({
+  item,
+  tableName,
+}: InsertItemProps): Promise<void> => {
+  const command = new PutCommand({
+    TableName: tableName,
+    Item: item,
+  });
+
+  await docClient.send(command);
+};
+
+type EditItemByIdProps = {
+  userId: string;
+  itemId: string;
+  updates: Partial<VaultItemType>;
+  tableName: string;
+};
+
+export const editItemById = async ({
+  userId,
+  itemId,
+  updates,
+  tableName,
+}: EditItemByIdProps): Promise<VaultItemType | null> => {
+  const updateExpressions: string[] = [];
+  const expressionAttributeValues: Record<string, any> = {};
+
+  for (const [key, value] of Object.entries(updates)) {
+    updateExpressions.push(`${key} = :${key}`);
+    expressionAttributeValues[`:${key}`] = value;
+  }
+
+  const command = new UpdateCommand({
+    TableName: tableName,
+    Key: {
+      userId,
+      id: itemId,
+    },
+    UpdateExpression: `SET ${updateExpressions.join(", ")}`,
+    ExpressionAttributeValues: expressionAttributeValues,
+    ReturnValues: "ALL_NEW",
+  });
+
+  const result = await docClient.send(command);
+
+  return (result.Attributes as VaultItemType) ?? null;
+};

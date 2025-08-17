@@ -7,4 +7,8 @@ export const vaultApi = {
       secret,
     }),
   deleteItem: (id: string) => apiClient.delete(`/vault/deleteItem/${id}`),
+  editItem: (id: string, secret: string) =>
+    apiClient.patch(`/vault/editItem/${id}`, {
+      secret,
+    }),
 };
