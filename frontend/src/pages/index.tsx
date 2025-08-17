@@ -10,6 +10,8 @@ import DefaultLayout from "@/layouts/default";
 import { decryptList } from "@/utils/crypto";
 import { useCryptoStore } from "@/store/cryptoStore";
 import { DecryptedItem } from "@/types";
+import { Type } from "@/components/AddItem/AddItemModal";
+import { useVaultStore } from "@/store/vaultStore";
 
 export const IndexPage = () => {
   const { data, isLoading } = useGetList();
@@ -21,6 +23,8 @@ export const IndexPage = () => {
 
   const [decryptedList, setDecryptedList] = useState<DecryptedItem[]>([]);
   const key = useCryptoStore((store) => store.key);
+
+  const setQuantityMap = useVaultStore((store) => store.setQuantityMap);
 
   useEffect(() => {
     if (list.length === 0 && !isLoading) {
@@ -47,9 +51,22 @@ export const IndexPage = () => {
     if (doesVaultExists && key) async();
   }, [list, key, doesVaultExists]);
 
-  if (isLoading) return <LoadingPage />;
+  useEffect(() => {
+    let quantityMap: Map<Type, number> = new Map();
 
-  console.log(doesVaultExists);
+    for (const item of decryptedList) {
+      const key = item.type;
+
+      quantityMap.set(key, (quantityMap.get(key) ?? 0) + 1);
+    }
+
+    if (!quantityMap.size) return;
+    console.log(quantityMap);
+
+    setQuantityMap(quantityMap);
+  }, [decryptedList]);
+
+  if (isLoading) return <LoadingPage />;
 
   if (!doesVaultExists) return <CreateVaultPage />;
 

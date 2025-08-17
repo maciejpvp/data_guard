@@ -1,4 +1,6 @@
+import { useGetList } from "@/hooks/queries/vault/useGetList";
 import { Category, SidebarItem } from "./SidebarItem";
+import { useVaultStore } from "@/store/vaultStore";
 
 export const Sidebar = () => {
   const categories: Category[] = [
@@ -27,16 +29,22 @@ export const Sidebar = () => {
     },
   ];
 
-  // Index of categories array
-  const selected = 0;
+  const quantityMap = useVaultStore((store) => store.quantityMap);
+
+  if (!quantityMap) return null;
+
+  const all = [...quantityMap.values()].reduce((sum, n) => sum + n, 0);
 
   return (
     <div className="bg-content1 text-content1-foreground p-3 rounded-md">
       <h1 className="font-semibold  text-lg ml-1 mb-1">Categories</h1>
       <ul className="flex flex-col gap-2">
-        {categories.map((category, index) => (
+        {categories.map((category) => (
           <li key={category.title}>
-            <SidebarItem active={index === selected} item={category} />
+            <SidebarItem
+              count={category.key ? quantityMap.get(category.key) : all}
+              item={category}
+            />
           </li>
         ))}
       </ul>
