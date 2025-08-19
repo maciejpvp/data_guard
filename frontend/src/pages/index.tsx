@@ -61,7 +61,6 @@ export const IndexPage = () => {
     }
 
     if (!quantityMap.size) return;
-    console.log(quantityMap);
 
     setQuantityMap(quantityMap);
   }, [decryptedList]);
