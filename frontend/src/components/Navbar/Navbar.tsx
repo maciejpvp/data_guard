@@ -1,4 +1,3 @@
-import { Button } from "@heroui/button";
 import { Link } from "@heroui/link";
 import {
   Navbar as HeroUINavbar,
@@ -6,14 +5,13 @@ import {
   NavbarContent,
   NavbarItem,
   NavbarMenuToggle,
-  NavbarMenu,
-  NavbarMenuItem,
 } from "@heroui/navbar";
-import { Avatar } from "@heroui/avatar";
 
 import { Logo } from "../Logo";
 
-import { siteConfig } from "@/config/site";
+import { User } from "./User";
+import { MobileMenu } from "./MobileMenu";
+
 import { ThemeSwitch } from "@/components/theme-switch";
 import { useAuthStore } from "@/store/authStore";
 
@@ -40,17 +38,7 @@ export const Navbar = () => {
         justify="end"
       >
         <NavbarItem className="hidden sm:flex">
-          <Button
-            className="text-default-600 mt-1 bg-transparent"
-            startContent={
-              <Avatar
-                className="border-1 border-default"
-                name={user?.name}
-                src={user?.avatar}
-              />
-            }
-            variant="flat"
-          />
+          {user && <User user={user} />}
         </NavbarItem>
         <ThemeSwitch className="hidden" />
       </NavbarContent>
@@ -62,27 +50,7 @@ export const Navbar = () => {
       </NavbarContent>
 
       {/* Phone Drop Down */}
-      <NavbarMenu>
-        <div className="mx-4 mt-2 flex flex-col gap-2">
-          {siteConfig.navMenuItems.map((item, index) => (
-            <NavbarMenuItem key={`${item}-${index}`}>
-              <Link
-                color={
-                  index === 2
-                    ? "primary"
-                    : index === siteConfig.navMenuItems.length - 1
-                      ? "danger"
-                      : "foreground"
-                }
-                href="#"
-                size="lg"
-              >
-                {item.label}
-              </Link>
-            </NavbarMenuItem>
-          ))}
-        </div>
-      </NavbarMenu>
+      <MobileMenu />
     </HeroUINavbar>
   );
 };

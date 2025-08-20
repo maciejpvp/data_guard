@@ -20,11 +20,11 @@ export const VaultList = ({ list }: Props) => {
 
   const filter = searchParams.get("filter");
 
-  const sidebarFilteredList = filter
-    ? list.filter((item) => item.type === filter)
-    : list;
-
   useEffect(() => {
+    const sidebarFilteredList = filter
+      ? list.filter((item) => item.type === filter)
+      : list;
+
     const searchObject = sidebarFilteredList.map((entry) => {
       const nameField = entry.item.find((f) => f.key === "name");
       const name = nameField?.defaultValue || "";
@@ -41,8 +41,6 @@ export const VaultList = ({ list }: Props) => {
       };
     });
 
-    console.log(sidebarFilteredList);
-
     const result = searchItems(searchObject, searchBarValue);
 
     const founded = sidebarFilteredList.filter((item) =>
@@ -50,7 +48,7 @@ export const VaultList = ({ list }: Props) => {
     );
 
     setFilteredList(founded);
-  }, [sidebarFilteredList, searchBarValue]);
+  }, [list, searchBarValue, filter]);
 
   return (
     <div className="flex flex-col gap-4">

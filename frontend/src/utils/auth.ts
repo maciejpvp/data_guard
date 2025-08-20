@@ -2,6 +2,7 @@ const COGNITO_DOMAIN =
   "https://data-guard-maciejpvp-test.auth.eu-central-1.amazoncognito.com";
 const CLIENT_ID = "7rna45aoila8e165sl7jbgk8pu";
 const REDIRECT_URI = "http://localhost:5173/callback";
+const LOGOUT_REDIRECT_URI = "http://localhost:5173/logout";
 
 export const getCognitoLoginUrl = (identityProvider: string) => {
   return (
@@ -75,4 +76,15 @@ export const refreshSession = async (
   }
 
   return null;
+};
+
+export const logout = () => {
+  localStorage.removeItem("refreshToken");
+
+  const logoutUrl =
+    `${COGNITO_DOMAIN}/logout` +
+    `?client_id=${CLIENT_ID}` +
+    `&logout_uri=${encodeURIComponent(LOGOUT_REDIRECT_URI)}`;
+
+  window.location.href = logoutUrl;
 };

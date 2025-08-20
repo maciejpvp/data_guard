@@ -38,3 +38,9 @@ export type ApiKeyType = {
   apikey: string;
   url?: string;
 };
+
+export type UserType = {
+  name: string;
+  email: string;
+  avatar: string;
+};

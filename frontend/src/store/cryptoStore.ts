@@ -4,12 +4,20 @@ import { checkKey, getKeyFromMaster } from "@/utils/crypto";
 
 type CryptoState = {
   key: CryptoKey | undefined;
-  setKey: (masterKey: string, testValue?: string) => Promise<boolean>;
+  setKey: (
+    masterKey: string | undefined,
+    testValue?: string,
+  ) => Promise<boolean>;
 };
 
 export const useCryptoStore = create<CryptoState>((set) => ({
   key: undefined,
   setKey: async (masterKey, testValue = undefined) => {
+    if (!masterKey) {
+      set({ key: undefined });
+
+      return true;
+    }
     const key = await getKeyFromMaster(masterKey);
 
     if (!testValue) {

@@ -2,12 +2,7 @@ import { create } from "zustand";
 import { jwtDecode } from "jwt-decode";
 
 import { refreshSession } from "@/utils/auth";
-
-type User = {
-  name: string;
-  email: string;
-  avatar: string;
-};
+import { UserType } from "@/types";
 
 interface GoogleIdTokenPayload {
   given_name?: string;
@@ -17,7 +12,7 @@ interface GoogleIdTokenPayload {
 
 type AuthState = {
   idToken: string;
-  user: User | undefined;
+  user: UserType | undefined;
   login: () => Promise<void>;
   refresh: () => Promise<void>;
 };

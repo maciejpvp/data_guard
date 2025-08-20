@@ -10,6 +10,7 @@ import AuthLayout from "@/layouts/auth";
 import { useAuthStore } from "@/store/authStore";
 import { useCryptoStore } from "@/store/cryptoStore";
 import { checkKey, getKeyFromMaster } from "@/utils/crypto";
+import { logout } from "@/utils/auth";
 
 type Props = {
   testValue: string;
@@ -124,8 +125,8 @@ export const MasterkeyPage = ({ testValue }: Props) => {
                 <Form className="flex flex-col gap-5" onSubmit={handleSubmit}>
                   <div className="flex flex-col w-full gap-1">
                     <Input
+                      //eslint-disable-next-line
                       autoFocus
-                      defaultValue="SuperHaslo123_!"
                       className={`transition-all duration-200 focus:scale-[1.02] ${
                         status === "error"
                           ? "border-red-500 border-2"
@@ -133,6 +134,7 @@ export const MasterkeyPage = ({ testValue }: Props) => {
                             ? "border-green-500 border-2"
                             : ""
                       }`}
+                      defaultValue="SuperHaslo123_!"
                       label="Master Key"
                       name="masterKey"
                       placeholder="Enter master key"
@@ -162,6 +164,7 @@ export const MasterkeyPage = ({ testValue }: Props) => {
                         color="primary"
                         type="button"
                         variant="bordered"
+                        onPress={logout}
                       >
                         <span className="font-semibold text-blue-300">
                           Log Out

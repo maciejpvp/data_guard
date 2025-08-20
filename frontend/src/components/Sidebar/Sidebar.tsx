@@ -2,32 +2,32 @@ import { useGetList } from "@/hooks/queries/vault/useGetList";
 import { Category, SidebarItem } from "./SidebarItem";
 import { useVaultStore } from "@/store/vaultStore";
 
+export const categories: Category[] = [
+  {
+    title: "All Items",
+  },
+  {
+    title: "Login",
+    key: "password",
+  },
+  {
+    title: "Card",
+    key: "card",
+  },
+  {
+    title: "Note",
+    key: "note",
+  },
+  {
+    title: "SSH Key",
+    key: "sshkey",
+  },
+  {
+    title: "API Key",
+    key: "apikey",
+  },
+];
 export const Sidebar = () => {
-  const categories: Category[] = [
-    {
-      title: "All Items",
-    },
-    {
-      title: "Login",
-      key: "password",
-    },
-    {
-      title: "Card",
-      key: "card",
-    },
-    {
-      title: "Note",
-      key: "note",
-    },
-    {
-      title: "SSH Key",
-      key: "sshkey",
-    },
-    {
-      title: "API Key",
-      key: "apikey",
-    },
-  ];
 
   const quantityMap = useVaultStore((store) => store.quantityMap);
 
