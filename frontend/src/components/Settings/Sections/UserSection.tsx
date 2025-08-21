@@ -1,4 +1,6 @@
+import { vaultApi } from "@/api/vault";
 import { useAuthStore } from "@/store/authStore";
+import { Button } from "@heroui/button";
 import { User } from "@heroui/user";
 
 export const UserSection = () => {
@@ -18,6 +20,7 @@ export const UserSection = () => {
           name={`${user?.name} ${user?.surname}`}
         />
       </div>
+      <Button onPress={vaultApi.deleteVault}>Delete Vault</Button>
     </div>
   );
 };

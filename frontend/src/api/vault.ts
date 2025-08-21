@@ -11,4 +11,5 @@ export const vaultApi = {
     apiClient.patch(`/vault/editItem/${id}`, {
       secret,
     }),
+  deleteVault: () => apiClient.delete("/vault/delete-vault"),
 };

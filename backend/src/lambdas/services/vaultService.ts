@@ -5,6 +5,7 @@ import {
   QueryCommand,
   PutCommand,
   UpdateCommand,
+  BatchWriteCommand,
 } from "@aws-sdk/lib-dynamodb";
 
 type GetItemsByUserIdProps = {
@@ -103,4 +104,48 @@ export const editItemById = async ({
   const result = await docClient.send(command);
 
   return (result.Attributes as VaultItemType) ?? null;
+};
+
+export const deleteAllItemsByUserId = async ({
+  userId,
+  tableName,
+}: {
+  userId: string;
+  tableName: string;
+}): Promise<void> => {
+  // Step 1: Query all items for that userId
+  const queryResponse = await docClient.send(
+    new QueryCommand({
+      TableName: tableName,
+      KeyConditionExpression: "userId = :u",
+      ExpressionAttributeValues: {
+        ":u": userId,
+      },
+    }),
+  );
+
+  if (!queryResponse.Items || queryResponse.Items.length === 0) return;
+
+  // Step 2: Batch delete (25 items max per request)
+  const chunks = [];
+  for (let i = 0; i < queryResponse.Items.length; i += 25) {
+    chunks.push(queryResponse.Items.slice(i, i + 25));
+  }
+
+  for (const chunk of chunks) {
+    await docClient.send(
+      new BatchWriteCommand({
+        RequestItems: {
+          [tableName]: chunk.map((item) => ({
+            DeleteRequest: {
+              Key: {
+                userId: item.userId,
+                id: item.id, // must include the sort key!
+              },
+            },
+          })),
+        },
+      }),
+    );
+  }
 };
