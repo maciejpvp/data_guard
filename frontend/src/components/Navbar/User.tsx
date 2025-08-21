@@ -10,16 +10,22 @@ import {
   DropdownMenu,
   DropdownTrigger,
 } from "@heroui/dropdown";
+import { useNavigate } from "react-router-dom";
 
 type Props = {
   user: UserType;
 };
 
 export const User = ({ user }: Props) => {
+  const navigate = useNavigate();
   const setKey = useCryptoStore((store) => store.setKey);
 
   const handleLockVault = () => {
     setKey(undefined);
+  };
+
+  const handleSettings = () => {
+    navigate("/settings");
   };
 
   return (
@@ -39,7 +45,9 @@ export const User = ({ user }: Props) => {
           />
         </DropdownTrigger>
         <DropdownMenu>
-          <DropdownItem key="settings">Settings</DropdownItem>
+          <DropdownItem key="settings" onClick={handleSettings}>
+            Settings
+          </DropdownItem>
           <DropdownItem key="lockvault" onClick={handleLockVault}>
             Lock Vault
           </DropdownItem>

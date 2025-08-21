@@ -8,6 +8,8 @@ interface GoogleIdTokenPayload {
   given_name?: string;
   email?: string;
   picture?: string;
+  name?: string;
+  family_name?: string;
 }
 
 type AuthState = {
@@ -43,6 +45,8 @@ export const useAuthStore = create<AuthState>((set) => ({
           name: decoded?.given_name ?? "",
           email: decoded?.email ?? "",
           avatar: decoded?.picture ?? "",
+          fullname: decoded?.name ?? "",
+          surname: decoded?.family_name ?? "",
         },
       });
     } else {

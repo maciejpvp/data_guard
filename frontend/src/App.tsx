@@ -8,6 +8,7 @@ import { useAuthStore } from "./store/authStore";
 import { IndexPage } from "@/pages/index";
 import { LoginPage } from "@/pages/login";
 import { CallbackPage } from "@/pages/callback";
+import { SettingsPage } from "./pages/settings";
 
 function App() {
   const login = useAuthStore((store) => store.login);
@@ -35,6 +36,7 @@ function App() {
         <Route element={<IndexPage />} path="/" />
         <Route element={<LoginPage />} path="/login" />
         <Route element={<CallbackPage />} path="/callback" />
+        <Route element={<SettingsPage />} path="/settings" />
         <Route element={<Navigate to="/login" />} path="*" />
       </Routes>
       <ReactQueryDevtools initialIsOpen={false} />

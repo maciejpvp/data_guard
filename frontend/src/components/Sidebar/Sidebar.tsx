@@ -1,5 +1,5 @@
-import { useGetList } from "@/hooks/queries/vault/useGetList";
 import { Category, SidebarItem } from "./SidebarItem";
+
 import { useVaultStore } from "@/store/vaultStore";
 
 export const categories: Category[] = [
@@ -28,7 +28,6 @@ export const categories: Category[] = [
   },
 ];
 export const Sidebar = () => {
-
   const quantityMap = useVaultStore((store) => store.quantityMap);
 
   if (!quantityMap) return null;

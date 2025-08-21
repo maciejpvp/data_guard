@@ -30,6 +30,7 @@
     "@heroui/toast": "^2.0.14",
     "@heroui/use-disclosure": "^2.2.15",
     "@heroui/use-theme": "2.1.10",
+    "@heroui/user": "^2.2.20",
     "@react-aria/visually-hidden": "3.8.26",
     "@react-types/shared": "3.31.0",
     "@tailwindcss/postcss": "4.1.11",

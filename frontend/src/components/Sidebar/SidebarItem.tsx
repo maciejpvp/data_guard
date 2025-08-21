@@ -44,7 +44,7 @@ export const SidebarItem = ({ item, count }: Props) => {
     >
       {title}
       {count && (
-        <span className="bg-blue-900 rounded-lg px-2  flex items-center justify-center text-xs">
+        <span className="bg-blue-900 text-zinc-100 rounded-lg px-2  flex items-center justify-center text-xs">
           {count}
         </span>
       )}

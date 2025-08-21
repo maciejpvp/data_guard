@@ -43,4 +43,6 @@ export type UserType = {
   name: string;
   email: string;
   avatar: string;
+  fullname: string;
+  surname: string;
 };
