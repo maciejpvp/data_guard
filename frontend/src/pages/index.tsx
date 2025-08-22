@@ -67,9 +67,9 @@ export const IndexPage = () => {
 
   if (isLoading) return <LoadingPage />;
 
-  if (!doesVaultExists) return <CreateVaultPage />;
+  if (!doesVaultExists && list.length === 0) return <CreateVaultPage />;
 
-  if (!key) return <MasterkeyPage testValue={doesVaultExists} />;
+  if (!key) return <MasterkeyPage testValue={doesVaultExists || ""} />;
 
   return (
     <DefaultLayout>

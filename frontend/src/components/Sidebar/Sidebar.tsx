@@ -35,7 +35,7 @@ export const Sidebar = () => {
     : 0;
 
   return (
-    <div className="bg-content1 text-content1-foreground p-3 rounded-md">
+    <div className="bg-content1 text-content1-foreground p-3 rounded-md w-64 mt-4">
       <h1 className="font-semibold  text-lg ml-1 mb-1">Categories</h1>
       <ul className="flex flex-col gap-2">
         {categories.map((category) => (

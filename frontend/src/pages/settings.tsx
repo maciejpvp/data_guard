@@ -1,17 +1,20 @@
+import { useEffect } from "react";
+import { useSearchParams } from "react-router-dom";
+
 import { AppearanceSection } from "@/components/Settings/Sections/AppearanceSection";
 import { UserSection } from "@/components/Settings/Sections/UserSection";
-import { SettingsSidebar } from "@/components/Settings/SettingsSidebar";
 import SettingsLayout from "@/layouts/settings";
-import { useSearchParams } from "react-router-dom";
 
 export const SettingsPage = () => {
   const [searchParams, setSearchParams] = useSearchParams();
 
   const side = searchParams.get("side");
 
-  if (!side) {
-    setSearchParams({ side: "account" });
-  }
+  useEffect(() => {
+    if (!side) {
+      setSearchParams({ side: "account" });
+    }
+  }, [side, setSearchParams]);
 
   return (
     <SettingsLayout>
