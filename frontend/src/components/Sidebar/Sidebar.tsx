@@ -30,9 +30,9 @@ export const categories: Category[] = [
 export const Sidebar = () => {
   const quantityMap = useVaultStore((store) => store.quantityMap);
 
-  if (!quantityMap) return null;
-
-  const all = [...quantityMap.values()].reduce((sum, n) => sum + n, 0);
+  const all = quantityMap
+    ? [...quantityMap.values()].reduce((sum, n) => sum + n, 0)
+    : 0;
 
   return (
     <div className="bg-content1 text-content1-foreground p-3 rounded-md">
@@ -41,7 +41,13 @@ export const Sidebar = () => {
         {categories.map((category) => (
           <li key={category.title}>
             <SidebarItem
-              count={category.key ? quantityMap.get(category.key) : all}
+              count={
+                quantityMap
+                  ? category.key
+                    ? quantityMap.get(category.key)
+                    : all
+                  : undefined
+              }
               item={category}
             />
           </li>

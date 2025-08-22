@@ -8,6 +8,7 @@ import { VaultItem } from "./VaultItem";
 import { DecryptedItem } from "@/types";
 import { useEffect, useState } from "react";
 import { searchItems } from "@/utils/searchEngine";
+import { VaultEmptyState } from "./VaultEmptyState";
 
 type Props = {
   list: DecryptedItem[];
@@ -51,16 +52,23 @@ export const VaultList = ({ list }: Props) => {
   }, [list, searchBarValue, filter]);
 
   return (
-    <div className="flex flex-col gap-4">
-      <div className="flex flex-row gap-6 h-10">
-        <Searchbar setValue={setSearchBarValue} value={searchBarValue} />
-        <AddItemButton />
+    <main className="flex flex-col h-full">
+      <div className="flex flex-col gap-4 flex-1 min-h-0">
+        <div className="flex flex-row gap-6 h-10">
+          <Searchbar setValue={setSearchBarValue} value={searchBarValue} />
+          <AddItemButton />
+        </div>
+
+        {filteredList.length > 0 ? (
+          <ul className="flex flex-col gap-4 overflow-y-auto flex-1 max-h-[45%] [mask-image:linear-gradient(to_bottom,black_90%,transparent)] custom-scrollbar pr-1">
+            {filteredList.map((item, index) => (
+              <VaultItem key={index} item={item} />
+            ))}
+          </ul>
+        ) : (
+          <VaultEmptyState />
+        )}
       </div>
-      <ul className="flex flex-col gap-4">
-        {filteredList.map((item, index) => (
-          <VaultItem key={index} item={item} />
-        ))}
-      </ul>
-    </div>
+    </main>
   );
 };

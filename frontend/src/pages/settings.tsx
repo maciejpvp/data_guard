@@ -9,6 +9,10 @@ export const SettingsPage = () => {
 
   const side = searchParams.get("side");
 
+  if (!side) {
+    setSearchParams({ side: "account" });
+  }
+
   return (
     <SettingsLayout>
       <div className="h-full w-full flex flex-row">
