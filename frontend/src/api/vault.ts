@@ -12,4 +12,5 @@ export const vaultApi = {
       secret,
     }),
   deleteVault: () => apiClient.delete("/vault/delete-vault"),
+  deleteAccount: () => apiClient.delete("/vault/delete-account"),
 };

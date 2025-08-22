@@ -1,7 +1,9 @@
-import { vaultApi } from "@/api/vault";
-import { useAuthStore } from "@/store/authStore";
 import { Button } from "@heroui/button";
+import { Card, CardBody, CardHeader } from "@heroui/card";
 import { User } from "@heroui/user";
+
+import { useAuthStore } from "@/store/authStore";
+import { vaultApi } from "@/api/vault";
 
 export const UserSection = () => {
   const user = useAuthStore((store) => store.user);
@@ -20,7 +22,23 @@ export const UserSection = () => {
           name={`${user?.name} ${user?.surname}`}
         />
       </div>
-      <Button onPress={vaultApi.deleteVault}>Delete Vault</Button>
+      <Card className="bg-default-100">
+        <CardHeader>
+          <span className="text-red-700 font-semibold text-lg">
+            Danger Zone
+          </span>
+        </CardHeader>
+        <CardBody>
+          <div className="flex flex-row gap-3">
+            <Button color="danger" onPress={vaultApi.deleteVault}>
+              Delete Vault
+            </Button>
+            <Button color="danger" onPress={vaultApi.deleteAccount}>
+              Delete Account
+            </Button>
+          </div>
+        </CardBody>
+      </Card>
     </div>
   );
 };
