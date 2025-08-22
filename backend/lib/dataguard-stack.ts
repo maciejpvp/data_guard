@@ -16,7 +16,11 @@ export class DataGuardStack extends cdk.Stack {
 
     const vaultDB = createVaultDB(this, { stage: props.stage });
 
-    const lambdas = createLambdas(this, { vaultDB, stage: props.stage });
+    const lambdas = createLambdas(this, {
+      vaultDB,
+      stage: props.stage,
+      userPool,
+    });
 
     configureApiGateway(this, lambdas, userPool, props.stage);
   }

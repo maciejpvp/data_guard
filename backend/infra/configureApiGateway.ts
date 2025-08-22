@@ -71,6 +71,16 @@ export const configureApiGateway = (
     authorizer,
   });
 
+  new ApiRoute(stack, `DeleteAccountRoute-${stage}`, {
+    api,
+    type: "DELETE",
+    route: "vault/delete-account",
+    lambda: lambdas.deleteAccount.lambdaFunction,
+    name: `DeleteAccount-${stage}`,
+    secured: true,
+    authorizer,
+  });
+
   new ApiRoute(stack, `EditItemRoute-${stage}`, {
     api,
     type: "PATCH",
