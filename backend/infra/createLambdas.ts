@@ -5,12 +5,14 @@ import { CreateLambda } from "../constructs/CreateLambda";
 
 type Props = {
   vaultDB: aws_dynamodb.Table;
+  connectionsDB: aws_dynamodb.Table;
   userPool: cognito.UserPool;
+  userPoolClient: cognito.UserPoolClient;
   stage: string;
 };
 
 export const createLambdas = (stack: Stack, props: Props) => {
-  const { vaultDB, stage, userPool } = props;
+  const { vaultDB, stage, userPool, userPoolClient, connectionsDB } = props;
 
   const getList = new CreateLambda(stack, `GetListLambda-${stage}`, {
     name: "getList",
@@ -99,6 +101,51 @@ export const createLambdas = (stack: Stack, props: Props) => {
     ],
   });
 
+  const connectWS = new CreateLambda(stack, `ConnectWSLambda-${stage}`, {
+    name: "connectWS",
+    stage,
+    resources: [
+      {
+        grant: (fn) => connectionsDB.grantWriteData(fn),
+        envName: "connectionsDB",
+        envValue: connectionsDB.tableName,
+      },
+    ],
+  });
+
+  const disconnectWS = new CreateLambda(stack, `DisconnectWSLambda-${stage}`, {
+    name: "disconnectWS",
+    stage,
+    resources: [
+      {
+        grant: (fn) => connectionsDB.grantWriteData(fn),
+        envName: "connectionsDB",
+        envValue: connectionsDB.tableName,
+      },
+    ],
+  });
+
+  const authorizer = new CreateLambda(stack, `WsAuthLambda-${stage}`, {
+    name: "authorizer",
+    stage,
+    env: {
+      USER_POOL_ID: userPool.userPoolId,
+      CLIENT_ID: userPoolClient.userPoolClientId,
+    },
+  });
+
+  //   const authorizerFn = new lambda.Function(stack, `WsAuthLambda-${stage}`, {
+  //   runtime: lambda.Runtime.NODEJS_20_X,
+  //   handler: "authorizer.handler",
+  //   code: lambda.Code.fromAsset(
+  //     "src/lambdas/handlers/authorizer/authorizer.ts",
+  //   ),
+  //   environment: {
+  //     USER_POOL_ID: userPool.userPoolId,
+  //     CLIENT_ID: userPoolClient.userPoolClientId,
+  //   },
+  // });
+
   return {
     getList,
     addItem,
@@ -106,5 +153,8 @@ export const createLambdas = (stack: Stack, props: Props) => {
     deleteVault,
     deleteAccount,
     editItem,
+    connectWS,
+    disconnectWS,
+    authorizer,
   };
 };
