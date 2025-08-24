@@ -49,5 +49,7 @@ export const configureWebSocketApi = (
     value: wsApi.apiEndpoint,
   });
 
-  return { wsApi, stageRes };
+  const endpoint = `https://${wsApi.apiId}.execute-api.${stack.region}.amazonaws.com/${stage}`;
+
+  return { wsApi, stageRes, endpoint };
 };

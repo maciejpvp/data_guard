@@ -35,6 +35,11 @@ export const createLambdas = (stack: Stack, props: Props) => {
         envName: "vaultDB",
         envValue: vaultDB.tableName,
       },
+      {
+        grant: (fn) => connectionsDB.grantReadData(fn),
+        envName: "connectionsDB",
+        envValue: connectionsDB.tableName,
+      },
     ],
   });
 
