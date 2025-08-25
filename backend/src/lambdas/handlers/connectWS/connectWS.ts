@@ -12,9 +12,13 @@ export const handler = async (event: any) => {
 
     console.log(userId, connectionId);
 
+    const now = Math.floor(Date.now() / 1000);
+    const ttl = now + 24 * 60 * 60; // 24h = 86400s
+
     const item = {
       userId,
       connectionId,
+      ttl,
     };
 
     const command = new PutCommand({

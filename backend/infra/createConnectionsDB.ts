@@ -16,5 +16,11 @@ export const createConnectionsDB = (stack: Stack, props: Props) => {
     removalPolicy: RemovalPolicy.DESTROY,
   });
 
+  const cfnTable = table.node.defaultChild as dynamodb.CfnTable;
+  cfnTable.timeToLiveSpecification = {
+    attributeName: "ttl",
+    enabled: true,
+  };
+
   return table;
 };
