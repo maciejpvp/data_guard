@@ -3,13 +3,13 @@ import { useEffect } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 
+import { SettingsPage } from "./pages/settings";
 import { useAuthStore } from "./store/authStore";
+import { useWebSocketStore } from "./store/wsStore";
 
+import { CallbackPage } from "@/pages/callback";
 import { IndexPage } from "@/pages/index";
 import { LoginPage } from "@/pages/login";
-import { CallbackPage } from "@/pages/callback";
-import { SettingsPage } from "./pages/settings";
-import { useWebSocketStore } from "./store/wsStore";
 import { websocketUrl } from "./constants/ws";
 
 function App() {

@@ -1,6 +1,5 @@
 import { create } from "zustand";
 import { WebSocketPayload } from "../../../shared/types";
-import { websocketUrl } from "@/constants/ws";
 
 type EventCallbacks = {
   [type: string]: ((payload: any) => void)[];
@@ -10,11 +9,11 @@ type WebSocketStore = {
   ws: WebSocket | null;
   connected: boolean;
   events: EventCallbacks;
-  pingInterval: NodeJS.Timer | null;
 
   connect: (url: string) => void;
   disconnect: () => void;
   on: (type: string, callback: (payload: any) => void) => void;
+  off: (type: string, callback: (payload: any) => void) => void;
   send: (type: string, payload: string) => void;
 };
 
@@ -22,33 +21,20 @@ export const useWebSocketStore = create<WebSocketStore>((set, get) => ({
   ws: null,
   connected: false,
   events: {},
-  pingInterval: null,
 
   connect: (url: string) => {
-    if (get().ws) return; // już połączony
+    if (get().ws) return; // already connected
 
     const ws = new WebSocket(url);
 
     ws.onopen = () => {
       set({ connected: true });
       console.log("WebSocket connected");
-
-      //Ping WebSocket Every 7 Minutes.
-      const interval = setInterval(
-        () => {
-          console.log("Ping");
-          get().send("ping", Date.now().toString());
-        },
-        7 * 60 * 1000,
-      );
-
-      set({ pingInterval: interval });
     };
 
     ws.onmessage = (event) => {
       try {
         const data: WebSocketPayload = JSON.parse(event.data);
-        console.log(data);
         const callbacks = get().events[data.type] || [];
 
         callbacks.forEach((cb) => cb(data.payload));
@@ -67,7 +53,6 @@ export const useWebSocketStore = create<WebSocketStore>((set, get) => ({
 
   disconnect: () => {
     const ws = get().ws;
-
     if (ws) {
       ws.close();
       set({ ws: null, connected: false });
@@ -79,6 +64,14 @@ export const useWebSocketStore = create<WebSocketStore>((set, get) => ({
 
     if (!events[type]) events[type] = [];
     events[type].push(callback);
+    set({ events });
+  },
+
+  off: (type: string, callback: (payload: any) => void) => {
+    const events = { ...get().events };
+
+    if (!events[type]) return;
+    events[type] = events[type].filter((cb) => cb !== callback);
     set({ events });
   },
 
