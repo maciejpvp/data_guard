@@ -65,21 +65,16 @@ export const handler: Handler = async (
     return sendResponse(500, err);
   }
 
-  const connectionIds = await getConnectionIdsByUserId({
-    userId,
-    tableName: connectionsDB,
-  });
-
-  console.log(connectionIds);
-
-  const payloadObject: WebSocketPayload = {
+  const payload: WebSocketPayload = {
     type: "addItem",
     payload: newItem,
   };
 
-  const wsPayload = JSON.stringify(payloadObject);
-
-  await wsSendMessage(connectionIds, wsPayload);
+  await wsSendMessage({
+    userId,
+    payload,
+    tableName: connectionsDB,
+  });
 
   return sendResponse(200, {
     message: "Successfully added item.",

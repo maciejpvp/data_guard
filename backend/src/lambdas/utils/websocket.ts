@@ -35,11 +35,20 @@ export const getConnectionIdsByUserId = async ({
   return connectionIds;
 };
 
-export const wsSendMessage = async (
-  connectionIds: string[],
-  payload: object | string,
-) => {
+type wsSendMessageProps = {
+  userId: string;
+  payload: object | string;
+  tableName: string;
+};
+
+export const wsSendMessage = async ({
+  userId,
+  payload,
+  tableName,
+}: wsSendMessageProps) => {
   const data = typeof payload === "string" ? payload : JSON.stringify(payload);
+
+  const connectionIds = await getConnectionIdsByUserId({ userId, tableName });
 
   await Promise.all(
     connectionIds.map(async (connectionId) => {

@@ -67,19 +67,17 @@ export const handler: Handler = async (
         secret,
       },
     });
-    const connectionIds = await getConnectionIdsByUserId({
-      userId,
-      tableName: connectionsDB,
-    });
 
-    const payloadObject: WebSocketPayload = {
+    const payload: WebSocketPayload = {
       type: "editItem",
       payload: updated,
     };
 
-    const wsPayload = JSON.stringify(payloadObject);
-
-    await wsSendMessage(connectionIds, wsPayload);
+    await wsSendMessage({
+      userId,
+      payload,
+      tableName: connectionsDB,
+    });
 
     return sendResponse(200, {
       message: "Item updated successfully.",

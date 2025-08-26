@@ -40,19 +40,16 @@ export const handler: Handler = async (
     });
   }
 
-  const payloadObject: WebSocketPayload = {
+  const payload: WebSocketPayload = {
     type: "deleteItem",
     payload: id,
   };
 
-  const wsPayload = JSON.stringify(payloadObject);
-
-  const connectionIds = await getConnectionIdsByUserId({
+  await wsSendMessage({
     userId,
+    payload,
     tableName: connectionsDB,
   });
-
-  await wsSendMessage(connectionIds, wsPayload);
 
   return sendResponse(200, {
     message: "Successfully got items.",
