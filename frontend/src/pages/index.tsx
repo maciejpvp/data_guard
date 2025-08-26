@@ -12,6 +12,7 @@ import { useCryptoStore } from "@/store/cryptoStore";
 import { DecryptedItem } from "@/types";
 import { Type } from "@/components/AddItem/AddItemModal";
 import { useVaultStore } from "@/store/vaultStore";
+import { useAuthStore } from "@/store/authStore";
 
 export const IndexPage = () => {
   const { data, isLoading } = useGetList();

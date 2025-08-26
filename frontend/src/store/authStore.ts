@@ -13,14 +13,14 @@ interface GoogleIdTokenPayload {
 }
 
 type AuthState = {
-  idToken: string;
+  idToken: string | undefined;
   user: UserType | undefined;
   login: () => Promise<void>;
   refresh: () => Promise<void>;
 };
 
 export const useAuthStore = create<AuthState>((set) => ({
-  idToken: "",
+  idToken: undefined,
   user: undefined,
   login: async () => {
     const refreshToken = localStorage.getItem("refreshToken");

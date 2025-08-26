@@ -8,19 +8,23 @@ import { queryKeys } from "@/constants/queryKeys";
 export const useDeleteItem = () => {
   const queryClient = useQueryClient();
 
-  return useMutation({
+  const handleSuccess = (id: string) => {
+    queryClient.setQueryData(
+      queryKeys.vault.itemList,
+      (oldItems: VaultItemType[]) => {
+        return [...oldItems.filter((item) => item.id !== id)];
+      },
+    );
+  };
+
+  const mutation = useMutation({
     mutationFn: async (id: string) => {
       const response = await vaultApi.deleteItem(id);
 
       return response.data;
     },
-    onSuccess: (_data, id) => {
-      queryClient.setQueryData(
-        queryKeys.vault.itemList,
-        (oldItems: VaultItemType[]) => {
-          return [...oldItems.filter((item) => item.id !== id)];
-        },
-      );
-    },
+    onSuccess: (_data, id) => handleSuccess(id),
   });
+
+  return { ...mutation, triggerSuccess: handleSuccess };
 };
