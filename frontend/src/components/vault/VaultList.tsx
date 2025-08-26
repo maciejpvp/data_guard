@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
+import { motion } from "framer-motion";
 
 import { AddItemButton } from "../AddItem/AddItemButton";
 import { Searchbar } from "../Searchbar/Searchbar";
@@ -12,6 +13,8 @@ import { DecryptedItem } from "@/types";
 import { searchItems } from "@/utils/searchEngine";
 import { useAddItem } from "@/hooks/mutations/useAddItem";
 import { useWebSocketStore } from "@/store/wsStore";
+import { useQueryClient } from "@tanstack/react-query";
+import { HiArrowPath } from "react-icons/hi2";
 
 type Props = {
   list: DecryptedItem[];
@@ -22,24 +25,11 @@ export const VaultList = ({ list }: Props) => {
   const [searchBarValue, setSearchBarValue] = useState<string>("");
   const [filteredList, setFilteredList] = useState<DecryptedItem[]>([]);
 
-  const on = useWebSocketStore((store) => store.on);
-  const off = useWebSocketStore((store) => store.off);
+  const queryClient = useQueryClient();
 
-  const { triggerSuccess } = useAddItem();
+  const [isRotateing, setIsRotating] = useState<boolean>(false);
 
   const filter = searchParams.get("filter");
-
-  useEffect(() => {
-    const handler = (data: VaultItemType) => {
-      triggerSuccess(data);
-    };
-
-    on("addItem", handler);
-
-    return () => {
-      off("addItem", handler);
-    };
-  }, [on, off]);
 
   useEffect(() => {
     const sidebarFilteredList = filter
@@ -71,12 +61,28 @@ export const VaultList = ({ list }: Props) => {
     setFilteredList(founded);
   }, [list, searchBarValue, filter]);
 
+  const refresh = () => {
+    if (isRotateing) return;
+    setIsRotating(true);
+    queryClient.invalidateQueries();
+
+    setTimeout(() => setIsRotating(false), 600);
+  };
+
   return (
     <main className="flex flex-col h-full">
       <div className="flex flex-col gap-4 flex-1 min-h-0">
-        <div className="flex flex-row gap-6 h-10">
+        <div className="flex flex-row gap-3 h-10 mr-1">
           <Searchbar setValue={setSearchBarValue} value={searchBarValue} />
           <AddItemButton />
+          <motion.div
+            animate={isRotateing ? { rotate: 360 } : { rotate: 0 }}
+            className="cursor-pointer  flex items-center"
+            transition={{ duration: 0.6, ease: "easeInOut" }}
+            onClick={refresh}
+          >
+            <HiArrowPath className="size-6 cursor-pointer hover:scale-105 transition-all duration-100 " />
+          </motion.div>
         </div>
 
         {filteredList.length > 0 ? (

@@ -4,11 +4,30 @@ import { VaultItemType } from "../../../../shared/types";
 
 import { vaultApi } from "@/api/vault";
 import { queryKeys } from "@/constants/queryKeys";
+import { useWebSocketStore } from "@/store/wsStore";
+import { useEffect } from "react";
 
 export const useEditItem = () => {
   const queryClient = useQueryClient();
+  const on = useWebSocketStore((store) => store.on);
+  const off = useWebSocketStore((store) => store.off);
 
-  return useMutation({
+  const handleSuccess = (updatedItem: VaultItemType) => {
+    const { id } = updatedItem;
+
+    queryClient.setQueryData(
+      queryKeys.vault.itemList,
+      (oldItems: VaultItemType[]) => {
+        const newItems = oldItems.map((item) => {
+          return item.id === id ? updatedItem : item;
+        });
+
+        return newItems;
+      },
+    );
+  };
+
+  const mutation = useMutation({
     mutationFn: async ({ id, secret }: { id: string; secret: string }) => {
       const response = await vaultApi.editItem(id, secret);
 
@@ -16,18 +35,22 @@ export const useEditItem = () => {
     },
     onSuccess: (data) => {
       const updatedItem = data.data.updatedItem;
-      const { id } = updatedItem;
 
-      queryClient.setQueryData(
-        queryKeys.vault.itemList,
-        (oldItems: VaultItemType[]) => {
-          const newItems = oldItems.map((item) => {
-            return item.id === id ? updatedItem : item;
-          });
-
-          return newItems;
-        },
-      );
+      handleSuccess(updatedItem);
     },
   });
+
+  useEffect(() => {
+    const handler = (updatedItem: VaultItemType) => {
+      handleSuccess(updatedItem);
+    };
+
+    on("editItem", handler);
+
+    return () => {
+      off("editItem", handler);
+    };
+  }, [on, off]);
+
+  return { ...mutation, triggerSuccess: handleSuccess };
 };

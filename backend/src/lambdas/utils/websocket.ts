@@ -9,6 +9,32 @@ const apiGwClient = new ApiGatewayManagementApiClient({
   endpoint: process.env.WS_ENDPOINT,
 });
 
+export const getConnectionIdsByUserId = async ({
+  userId,
+  tableName,
+}: {
+  userId: string;
+  tableName: string;
+}) => {
+  const command = new QueryCommand({
+    TableName: tableName,
+    KeyConditionExpression: "userId = :uid",
+    ExpressionAttributeValues: {
+      ":uid": userId,
+    },
+  });
+
+  const response = await docClient.send(command);
+
+  const items = response.Items ?? [];
+
+  const connectionIds = items.map((item) => {
+    return item.connectionId;
+  });
+
+  return connectionIds;
+};
+
 export const wsSendMessage = async (
   connectionIds: string[],
   payload: object | string,
@@ -35,30 +61,4 @@ export const wsSendMessage = async (
       }
     }),
   );
-};
-
-export const getConnectionIdsByUserId = async ({
-  userId,
-  tableName,
-}: {
-  userId: string;
-  tableName: string;
-}) => {
-  const command = new QueryCommand({
-    TableName: tableName,
-    KeyConditionExpression: "userId = :uid",
-    ExpressionAttributeValues: {
-      ":uid": userId,
-    },
-  });
-
-  const response = await docClient.send(command);
-
-  const items = response.Items ?? [];
-
-  const connectionIds = items.map((item) => {
-    return item.connectionId;
-  });
-
-  return connectionIds;
 };

@@ -12,15 +12,19 @@ export interface ResourceConfig {
 export interface CreateLambdaProps {
   name: string;
   stage: string;
+  grantWsAccess?: boolean;
   env?: Record<string, string>;
   resources?: ResourceConfig[];
 }
 
 export class CreateLambda extends Construct {
   public readonly lambdaFunction: NodejsFunction;
+  public readonly grantWsAccess: boolean;
 
   constructor(scope: Construct, id: string, props: CreateLambdaProps) {
     super(scope, id);
+
+    this.grantWsAccess = props.grantWsAccess ?? false;
 
     const { name, stage, env = {}, resources = [] } = props;
 

@@ -29,6 +29,7 @@ export const createLambdas = (stack: Stack, props: Props) => {
   const addItem = new CreateLambda(stack, `AddItemLambda-${stage}`, {
     name: "addItem",
     stage,
+    grantWsAccess: true,
     resources: [
       {
         grant: (fn) => vaultDB.grantWriteData(fn),
@@ -46,11 +47,17 @@ export const createLambdas = (stack: Stack, props: Props) => {
   const deleteItem = new CreateLambda(stack, `DeleteItemLambda-${stage}`, {
     name: "deleteItem",
     stage,
+    grantWsAccess: true,
     resources: [
       {
         grant: (fn) => vaultDB.grantWriteData(fn),
         envName: "vaultDB",
         envValue: vaultDB.tableName,
+      },
+      {
+        grant: (fn) => connectionsDB.grantReadData(fn),
+        envName: "connectionsDB",
+        envValue: connectionsDB.tableName,
       },
     ],
   });
@@ -97,11 +104,18 @@ export const createLambdas = (stack: Stack, props: Props) => {
   const editItem = new CreateLambda(stack, `EditItemLambda-${stage}`, {
     name: "editItem",
     stage,
+    grantWsAccess: true,
+
     resources: [
       {
         grant: (fn) => vaultDB.grantWriteData(fn),
         envName: "vaultDB",
         envValue: vaultDB.tableName,
+      },
+      {
+        grant: (fn) => connectionsDB.grantReadData(fn),
+        envName: "connectionsDB",
+        envValue: connectionsDB.tableName,
       },
     ],
   });

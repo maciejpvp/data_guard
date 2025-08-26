@@ -9,8 +9,11 @@ import { getCognitoUser } from "../../utils/cognitoUser";
 import Joi from "joi";
 import { parseBody } from "@/utils/parseBody";
 import { parsePathParams } from "@/utils/parsePathParams";
+import { getConnectionIdsByUserId, wsSendMessage } from "../../utils/websocket";
+import { WebSocketPayload } from "../../../../../shared/types";
 
 const vaultDB = process.env.vaultDB!;
+const connectionsDB = process.env.connectionsDB!;
 
 type BodyType = {
   secret: string;
@@ -64,6 +67,20 @@ export const handler: Handler = async (
         secret,
       },
     });
+    const connectionIds = await getConnectionIdsByUserId({
+      userId,
+      tableName: connectionsDB,
+    });
+
+    const payloadObject: WebSocketPayload = {
+      type: "editItem",
+      payload: updated,
+    };
+
+    const wsPayload = JSON.stringify(payloadObject);
+
+    await wsSendMessage(connectionIds, wsPayload);
+
     return sendResponse(200, {
       message: "Item updated successfully.",
       data: {

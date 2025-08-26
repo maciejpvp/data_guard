@@ -1,12 +1,16 @@
+import { useEffect } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 import { VaultItemType } from "../../../../shared/types";
 
 import { vaultApi } from "@/api/vault";
 import { queryKeys } from "@/constants/queryKeys";
+import { useWebSocketStore } from "@/store/wsStore";
 
 export const useAddItem = () => {
   const queryClient = useQueryClient();
+  const on = useWebSocketStore((store) => store.on);
+  const off = useWebSocketStore((store) => store.off);
 
   const handleSuccess = (newItem: VaultItemType) => {
     queryClient.setQueryData(
@@ -35,6 +39,18 @@ export const useAddItem = () => {
       handleSuccess(newItem);
     },
   });
+
+  useEffect(() => {
+    const handler = (data: VaultItemType) => {
+      handleSuccess(data);
+    };
+
+    on("addItem", handler);
+
+    return () => {
+      off("addItem", handler);
+    };
+  }, [on, off]);
 
   return { ...mutation, triggerSuccess: handleSuccess };
 };
