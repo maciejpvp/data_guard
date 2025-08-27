@@ -1,6 +1,7 @@
 import axios from "axios";
 
 import { useAuthStore } from "@/store/authStore";
+import { API_URL } from "@/config/config";
 
 declare module "axios" {
   export interface AxiosRequestConfig {
@@ -9,7 +10,7 @@ declare module "axios" {
 }
 
 const apiClient = axios.create({
-  baseURL: "https://2uyvouk6bk.execute-api.eu-central-1.amazonaws.com/prod",
+  baseURL: API_URL,
   timeout: 10000,
 });
 

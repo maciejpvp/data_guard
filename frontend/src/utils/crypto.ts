@@ -1,7 +1,6 @@
 import { VaultItemType } from "../../../shared/types";
 
 import { useCryptoStore } from "@/store/cryptoStore";
-import { DynamicField } from "@/components/AddItem/Forms/DynamicForm";
 import { DecryptedItem } from "@/types";
 
 const ENCRYPTION_ALGO = "AES-GCM";

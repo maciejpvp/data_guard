@@ -52,11 +52,11 @@ export const configureCognito = (stack: Stack, stage: string) => {
           cognito.OAuthScope.PROFILE,
         ],
         callbackUrls: [
-          `https://d1p6jpp4gceiew.cloudfront.net/callback`,
+          `https://d3otbfbbvrvpku.cloudfront.net/callback`,
           "http://localhost:5173/callback",
         ],
         logoutUrls: [
-          `https://d1p6jpp4gceiew.cloudfront.net/logout`,
+          `https://d3otbfbbvrvpku.cloudfront.net/logout`,
           "http://localhost:5173/logout",
         ],
       },

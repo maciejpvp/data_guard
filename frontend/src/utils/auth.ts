@@ -1,14 +1,15 @@
-const COGNITO_DOMAIN =
-  "https://data-guard-maciejpvp-test.auth.eu-central-1.amazoncognito.com";
-const CLIENT_ID = "7rna45aoila8e165sl7jbgk8pu";
-const REDIRECT_URI = "http://localhost:5173/callback";
-const LOGOUT_REDIRECT_URI = "http://localhost:5173/logout";
+import {
+  CLIENT_ID,
+  COGNITO_DOMAIN,
+  LOGOUT_REDIRECT_URL,
+  REDIRECT_URL,
+} from "@/config/config";
 
 export const getCognitoLoginUrl = (identityProvider: string) => {
   return (
     `${COGNITO_DOMAIN}/oauth2/authorize` +
     `?identity_provider=${identityProvider}` +
-    `&redirect_uri=${encodeURIComponent(REDIRECT_URI)}` +
+    `&redirect_uri=${encodeURIComponent(REDIRECT_URL)}` +
     "&response_type=CODE" +
     `&client_id=${CLIENT_ID}` +
     "&scope=openid+profile+email"
@@ -31,7 +32,7 @@ export const exchangeCodeForToken = async (code: string): Promise<void> => {
       grant_type: "authorization_code",
       client_id: CLIENT_ID,
       code,
-      redirect_uri: REDIRECT_URI,
+      redirect_uri: REDIRECT_URL,
     }),
   });
 
@@ -84,7 +85,7 @@ export const logout = () => {
   const logoutUrl =
     `${COGNITO_DOMAIN}/logout` +
     `?client_id=${CLIENT_ID}` +
-    `&logout_uri=${encodeURIComponent(LOGOUT_REDIRECT_URI)}`;
+    `&logout_uri=${encodeURIComponent(LOGOUT_REDIRECT_URL)}`;
 
   window.location.href = logoutUrl;
 };

@@ -1,20 +1,17 @@
 import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { motion } from "framer-motion";
+import { useQueryClient } from "@tanstack/react-query";
+import { HiArrowPath } from "react-icons/hi2";
 
 import { AddItemButton } from "../AddItem/AddItemButton";
 import { Searchbar } from "../Searchbar/Searchbar";
-import { VaultItemType } from "../../../../shared/types";
 
 import { VaultItem } from "./VaultItem";
 import { VaultEmptyState } from "./VaultEmptyState";
 
 import { DecryptedItem } from "@/types";
 import { searchItems } from "@/utils/searchEngine";
-import { useAddItem } from "@/hooks/mutations/useAddItem";
-import { useWebSocketStore } from "@/store/wsStore";
-import { useQueryClient } from "@tanstack/react-query";
-import { HiArrowPath } from "react-icons/hi2";
 
 type Props = {
   list: DecryptedItem[];

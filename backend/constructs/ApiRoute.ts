@@ -11,7 +11,7 @@ type RequestSchema = {
 
 type CommonProps = {
   api: apigateway.RestApi;
-  type: "GET" | "POST" | "DELETE" | "PUT" | "PATCH";
+  type: string; // "GET" | "POST" | "DELETE" | "PUT" | "PATCH";
   route: string | string[];
   lambda: lambda.IFunction;
   name?: string;

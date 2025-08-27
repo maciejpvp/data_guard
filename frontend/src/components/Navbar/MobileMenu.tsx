@@ -1,11 +1,13 @@
-import { useSearchParams } from "react-router-dom";
-import { Category } from "../Sidebar/SidebarItem"; // adjust import path
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { NavbarMenu, NavbarMenuItem } from "@heroui/navbar";
-import { siteConfig } from "@/config/site";
+
 import { categories } from "../Sidebar/Sidebar.tsx";
+
+import { siteConfig } from "@/config/site";
 
 export const MobileMenu = () => {
   const [searchParams, setSearchParams] = useSearchParams();
+  const navigate = useNavigate();
   const filter = searchParams.get("filter");
 
   const handleClick = (key?: string) => {
@@ -45,7 +47,7 @@ export const MobileMenu = () => {
         <div>
           {siteConfig.navMenuItems.map((item, index) => (
             <NavbarMenuItem key={`${item}-${index}`}>
-              <a
+              <button
                 className={`text-lg ${
                   index === 2
                     ? "text-primary"
@@ -53,10 +55,10 @@ export const MobileMenu = () => {
                       ? "text-danger"
                       : "text-foreground"
                 }`}
-                href="#"
+                onClick={() => navigate(item.href)}
               >
                 {item.label}
-              </a>
+              </button>
             </NavbarMenuItem>
           ))}
         </div>

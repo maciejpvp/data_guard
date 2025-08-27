@@ -1,6 +1,6 @@
-import AuthLayout from "@/layouts/auth";
-import { motion } from "framer-motion";
 import { Spinner } from "@heroui/spinner";
+
+import AuthLayout from "@/layouts/auth";
 
 export const LoadingPage = () => {
   return (

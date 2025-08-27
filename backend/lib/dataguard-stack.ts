@@ -7,6 +7,7 @@ import { createConnectionsDB } from "../infra/createConnectionsDB";
 import { configureWebSocketApi } from "../infra/configureWebSocketApi";
 import * as iam from "aws-cdk-lib/aws-iam";
 import { CreateLambda } from "@/constructs/CreateLambda";
+import { createWebsiteBucket } from "../infra/createWebsite";
 
 interface DataGuardStackProps extends cdk.StackProps {
   stage: string;
@@ -50,6 +51,9 @@ export class DataGuardStack extends cdk.Stack {
           ],
         }),
       );
+    }
+    if (props.stage === "prod") {
+      createWebsiteBucket(this);
     }
   }
 }

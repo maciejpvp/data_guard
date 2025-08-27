@@ -1,7 +1,4 @@
-import { useAuthStore } from "@/store/authStore";
-import { useCryptoStore } from "@/store/cryptoStore";
-import { UserType } from "@/types";
-import { logout } from "@/utils/auth";
+import { useNavigate } from "react-router-dom";
 import { Avatar } from "@heroui/avatar";
 import { Button } from "@heroui/button";
 import {
@@ -10,7 +7,10 @@ import {
   DropdownMenu,
   DropdownTrigger,
 } from "@heroui/dropdown";
-import { useNavigate } from "react-router-dom";
+
+import { useCryptoStore } from "@/store/cryptoStore";
+import { UserType } from "@/types";
+import { logout } from "@/utils/auth";
 
 type Props = {
   user: UserType;

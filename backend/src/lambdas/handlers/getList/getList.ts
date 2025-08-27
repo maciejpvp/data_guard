@@ -21,6 +21,7 @@ export const handler: Handler = async (
 
   return sendResponse(200, {
     message: "Successfully got items.",
+    info: "Test API",
     data: {
       list,
     },

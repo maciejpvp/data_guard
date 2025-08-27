@@ -3,8 +3,14 @@ import { DataGuardStack } from "../lib/dataguard-stack";
 
 const app = new cdk.App();
 
-const stage = app.node.tryGetContext("stage") || process.env.STAGE || "dev";
+// Stack test
+new DataGuardStack(app, "DataGuardTestStack", {
+  stage: "test",
+});
 
-new DataGuardStack(app, "dataguard-stack", { stage });
+// Stack prod
+new DataGuardStack(app, "DataGuardProdStack", {
+  stage: "prod",
+});
 
 app.synth();
