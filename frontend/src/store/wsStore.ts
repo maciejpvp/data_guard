@@ -34,6 +34,7 @@ export const useWebSocketStore = create<WebSocketStore>((set, get) => ({
 
     ws.onmessage = (event) => {
       try {
+        console.log(event.data);
         const data: WebSocketPayload = JSON.parse(event.data);
         const callbacks = get().events[data.type] || [];
 

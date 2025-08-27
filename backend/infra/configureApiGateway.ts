@@ -30,57 +30,66 @@ export const configureApiGateway = (
     },
   );
 
-  const routes = [
-    {
-      type: "GET",
-      route: "vault/getList",
-      lambda: lambdas.getList.lambdaFunction,
-      name: "GetList",
-    },
-    {
-      type: "POST",
-      route: "vault/addItem",
-      lambda: lambdas.addItem.lambdaFunction,
-      name: "AddItem",
-    },
-    {
-      type: "DELETE",
-      route: "vault/deleteItem/{id}",
-      lambda: lambdas.deleteItem.lambdaFunction,
-      name: "DeleteItem",
-    },
-    {
-      type: "DELETE",
-      route: "vault/delete-vault",
-      lambda: lambdas.deleteVault.lambdaFunction,
-      name: "DeleteVault",
-    },
-    {
-      type: "DELETE",
-      route: "vault/delete-account",
-      lambda: lambdas.deleteAccount.lambdaFunction,
-      name: "DeleteAccount",
-    },
-    {
-      type: "PATCH",
-      route: "vault/editItem/{id}",
-      lambda: lambdas.editItem.lambdaFunction,
-      name: "EditItem",
-    },
-  ];
+  new ApiRoute(stack, `GetListRoute-${stage}`, {
+    api,
+    type: "GET",
+    route: "vault/getList",
+    lambda: lambdas.getList.lambdaFunction,
+    name: `GetList-${stage}`,
+    secured: true,
+    authorizer,
+  });
 
-  for (const r of routes) {
-    new ApiRoute(stack, `${r.name}-${stage}`, {
-      api,
-      type: r.type,
-      route: r.route,
-      lambda: r.lambda,
-      name: `${r.name}-${stage}`,
-      secured: true,
-      authorizer,
-      // requestSchema: r.name === "AddItem" ? addItemSchema : undefined,
-    });
-  }
+  new ApiRoute(stack, `AddItemRoute-${stage}`, {
+    api,
+    type: "POST",
+    route: "vault/addItem",
+    lambda: lambdas.addItem.lambdaFunction,
+    name: `AddItem-${stage}`,
+    secured: true,
+    authorizer,
+    // requestSchema: addItemSchema,
+  });
+
+  new ApiRoute(stack, `DeleteItemRoute-${stage}`, {
+    api,
+    type: "DELETE",
+    route: "vault/deleteItem/{id}",
+    lambda: lambdas.deleteItem.lambdaFunction,
+    name: `DeleteItem-${stage}`,
+    secured: true,
+    authorizer,
+  });
+
+  new ApiRoute(stack, `DeleteVaultRoute-${stage}`, {
+    api,
+    type: "DELETE",
+    route: "vault/delete-vault",
+    lambda: lambdas.deleteVault.lambdaFunction,
+    name: `DeleteVault-${stage}`,
+    secured: true,
+    authorizer,
+  });
+
+  new ApiRoute(stack, `DeleteAccountRoute-${stage}`, {
+    api,
+    type: "DELETE",
+    route: "vault/delete-account",
+    lambda: lambdas.deleteAccount.lambdaFunction,
+    name: `DeleteAccount-${stage}`,
+    secured: true,
+    authorizer,
+  });
+
+  new ApiRoute(stack, `EditItemRoute-${stage}`, {
+    api,
+    type: "PATCH",
+    route: "vault/editItem/{id}",
+    lambda: lambdas.editItem.lambdaFunction,
+    name: `EditItem-${stage}`,
+    secured: true,
+    authorizer,
+  });
 
   const deployment = new apigateway.Deployment(
     stack,

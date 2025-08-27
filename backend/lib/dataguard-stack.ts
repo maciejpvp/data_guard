@@ -47,7 +47,7 @@ export class DataGuardStack extends cdk.Stack {
           effect: iam.Effect.ALLOW,
           actions: ["execute-api:ManageConnections"],
           resources: [
-            `arn:aws:execute-api:eu-central-1:${this.account}:${wsApi.apiId}/test/POST/@connections/*`,
+            `arn:aws:execute-api:eu-central-1:${this.account}:${wsApi.apiId}/${props.stage}/POST/@connections/*`,
           ],
         }),
       );
