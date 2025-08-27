@@ -1,9 +1,10 @@
 import * as cdk from "aws-cdk-lib";
 import { Stack } from "aws-cdk-lib";
 import * as apigateway from "aws-cdk-lib/aws-apigateway";
+import * as lambda from "aws-cdk-lib/aws-lambda";
 import { createLambdas } from "./createLambdas";
 import { UserPool } from "aws-cdk-lib/aws-cognito";
-import { ApiRoute } from "../constructs/ApiRoute";
+import { ApiRoute, ApiRouteProps, RequestSchema } from "../constructs/ApiRoute";
 import { addItemSchema } from "../schemas/addItem.schema";
 
 export const configureApiGateway = (
@@ -30,66 +31,91 @@ export const configureApiGateway = (
     },
   );
 
-  new ApiRoute(stack, `GetListRoute-${stage}`, {
-    api,
-    type: "GET",
-    route: "vault/getList",
-    lambda: lambdas.getList.lambdaFunction,
-    name: `GetList-${stage}`,
-    secured: true,
-    authorizer,
-  });
+  type Route =
+    | {
+        name: string;
+        type: "GET" | "POST" | "DELETE" | "PUT" | "PATCH";
+        route: string | string[];
+        lambda: lambda.IFunction;
+        secured: true;
+        authorizer: apigateway.CognitoUserPoolsAuthorizer;
+        requestSchema?: RequestSchema;
+      }
+    | {
+        name: string;
+        type: "GET" | "POST" | "DELETE" | "PUT" | "PATCH";
+        route: string | string[];
+        lambda: lambda.IFunction;
+        secured?: false;
+        authorizer?: never;
+        requestSchema?: RequestSchema;
+      };
 
-  new ApiRoute(stack, `AddItemRoute-${stage}`, {
-    api,
-    type: "POST",
-    route: "vault/addItem",
-    lambda: lambdas.addItem.lambdaFunction,
-    name: `AddItem-${stage}`,
-    secured: true,
-    authorizer,
-    // requestSchema: addItemSchema,
-  });
+  const routes: Route[] = [
+    {
+      name: `GetList`,
+      type: "GET",
+      route: "vault/getList",
+      lambda: lambdas.getList.lambdaFunction,
+      secured: true,
+      authorizer,
+    },
+    {
+      name: `AddItem`,
+      type: "POST",
+      route: "vault/addItem",
+      lambda: lambdas.addItem.lambdaFunction,
+      secured: true,
+      authorizer,
+      // requestSchema: addItemSchema,
+    },
+    {
+      name: `DeleteItem`,
+      type: "DELETE",
+      route: "vault/deleteItem/{id}",
+      lambda: lambdas.deleteItem.lambdaFunction,
+      secured: true,
+      authorizer,
+    },
+    {
+      name: `DeleteVault`,
+      type: "DELETE",
+      route: "vault/delete-vault",
+      lambda: lambdas.deleteVault.lambdaFunction,
+      secured: true,
+      authorizer,
+    },
+    {
+      name: `DeleteAccount`,
+      type: "DELETE",
+      route: "vault/delete-account",
+      lambda: lambdas.deleteAccount.lambdaFunction,
+      secured: true,
+      authorizer,
+    },
+    {
+      name: `EditItem`,
+      type: "PATCH",
+      route: "vault/editItem/{id}",
+      lambda: lambdas.editItem.lambdaFunction,
+    },
+  ];
 
-  new ApiRoute(stack, `DeleteItemRoute-${stage}`, {
-    api,
-    type: "DELETE",
-    route: "vault/deleteItem/{id}",
-    lambda: lambdas.deleteItem.lambdaFunction,
-    name: `DeleteItem-${stage}`,
-    secured: true,
-    authorizer,
-  });
+  for (const r of routes) {
+    const baseProps = {
+      api,
+      name: `${r.name}-${stage}`,
+      route: r.route,
+      lambda: r.lambda,
+      type: r.type,
+    };
 
-  new ApiRoute(stack, `DeleteVaultRoute-${stage}`, {
-    api,
-    type: "DELETE",
-    route: "vault/delete-vault",
-    lambda: lambdas.deleteVault.lambdaFunction,
-    name: `DeleteVault-${stage}`,
-    secured: true,
-    authorizer,
-  });
+    const props: ApiRouteProps = r.secured
+      ? { ...baseProps, secured: true, authorizer: r.authorizer }
+      : { ...baseProps, secured: false };
 
-  new ApiRoute(stack, `DeleteAccountRoute-${stage}`, {
-    api,
-    type: "DELETE",
-    route: "vault/delete-account",
-    lambda: lambdas.deleteAccount.lambdaFunction,
-    name: `DeleteAccount-${stage}`,
-    secured: true,
-    authorizer,
-  });
-
-  new ApiRoute(stack, `EditItemRoute-${stage}`, {
-    api,
-    type: "PATCH",
-    route: "vault/editItem/{id}",
-    lambda: lambdas.editItem.lambdaFunction,
-    name: `EditItem-${stage}`,
-    secured: true,
-    authorizer,
-  });
+    new ApiRoute(stack, `${r.name}Route-${stage}`, props);
+  }
 
   const deployment = new apigateway.Deployment(
     stack,
