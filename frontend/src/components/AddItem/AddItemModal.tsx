@@ -5,9 +5,10 @@ import {
   ModalBody,
   ModalFooter,
 } from "@heroui/modal";
+import { useSearchParams } from "react-router-dom";
 import { Button } from "@heroui/button";
 import { Select, SelectItem } from "@heroui/select";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import { DynamicForm } from "./Forms/DynamicForm";
 import { templates } from "./Forms/templates";
@@ -36,6 +37,10 @@ export const AddItemModal = ({ isOpen, onOpenChange }: Props) => {
   const submitButtonRef = useRef<HTMLButtonElement | null>(null);
   const { mutate: submitItem, isPending } = useAddItem();
 
+  const [searchParams] = useSearchParams();
+
+  const filter = searchParams.get("filter");
+
   const handleSelectionChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const newValue: Type = e.target.value as Type;
 
@@ -58,6 +63,12 @@ export const AddItemModal = ({ isOpen, onOpenChange }: Props) => {
     });
   };
 
+  useEffect(() => {
+    if (types.some((t) => t.key === filter)) {
+      setType(filter as Type);
+    }
+  }, [filter]);
+
   return (
     <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
       <ModalContent>
@@ -71,7 +82,7 @@ export const AddItemModal = ({ isOpen, onOpenChange }: Props) => {
               </ModalHeader>
               <ModalBody className="flex flex-col justify-center items-start">
                 <Select
-                  defaultSelectedKeys={["password"]}
+                  defaultSelectedKeys={[type]}
                   isDisabled={isPending}
                   label="Type"
                   placeholder="Select Type"
