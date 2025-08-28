@@ -48,9 +48,14 @@ export const handler: Handler = async (
 
   const { userId } = getCognitoUser(event);
 
+  let id = uuidv4();
+
+  if (secret.startsWith("#Vault-")) {
+    id = "Vault";
+  }
   const newItem: VaultItemType = {
     userId,
-    id: uuidv4(),
+    id,
     secret,
   };
 
@@ -59,9 +64,13 @@ export const handler: Handler = async (
       new PutCommand({
         TableName: vaultDB,
         Item: newItem,
+        ConditionExpression: "attribute_not_exists(id)",
       }),
     );
-  } catch (err) {
+  } catch (err: any) {
+    if (err.name === "ConditionalCheckFailedException") {
+      return sendResponse(400, "Item already exists");
+    }
     return sendResponse(500, err);
   }
 
