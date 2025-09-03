@@ -2,6 +2,8 @@
 
 Data Guard is a serverless **password manager** built on **AWS Lambda microservices** with **WebSocket updates** and a **React + TypeScript frontend**.
 
+Live Demo: https://d3otbfbbvrvpku.cloudfront.net/
+
 ---
 
 ## 🚀 Features
